@@ -1,0 +1,89 @@
+extends ../layout
+
+block content
+  .container
+    .page-header
+      h3 Class List
+      
+    ul.list-group
+      each c in classes
+        li.list-group-item(style="height:50px")
+          // i.fa.fa-circle
+          a.nounderline(shref='/class/' + c.id) #{c.classId}&nbsp
+            span.pull-right
+              a.pull-right.btn.btn-sm.btn-primary(style="margin-right:5px; border-radius:20px") 
+                 | Live Clas 
+                 span.fa.fa-video-camera 
+              if (user.role == 'teacher' || user.role == 'assistant' || user.role == 'admin')
+               a.pull-right.btn.btn-sm.btn-primary(href='/classlog/' + c.id,style="margin-right:5px; border-radius:20px")  
+                 | Stats 
+                 span.fa.fa-bar-chart
+              if (user.role == 'teacher'|| user.role == 'admin')
+                a.pull-right.btn.btn-sm.btn-primary(style="margin-right:5px; border-radius:20px", href='/class-staff/' + c.id)  
+                 | Staff 
+                 span.fa.fa-user1.cek
+                a.pull-right.btn.btn-sm.btn-danger(href='#',style="margin-right:5px; margin-bottom:5px; border-radius:20px", onclick='deleteId(\'' + c.id + '\')') 
+                 | Delete  
+                 span.fa.fa-trash      
+
+    if (user.role == 'teacher' || user.role == 'admin')
+      form.form-horizontal
+        .form-group
+          label.col-sm-2.control-label(for='classId') Class ID
+          .col-sm-7
+            input.form-control(type='text', name='classId', id='classId', placeholder='Class ID',autocomplete='off')
+          button#bt-new.col-sm-2.btn.btn-primary
+            i.fa.fa-plus-circle
+            | New Class
+
+    if (user.role == 'admin')
+      .page-header
+        h3 Change Student's Password
+
+      form.form-horizontal(action='/account/password-by-staff', method='POST')
+        input(type='hidden', name='_csrf', value=_csrf)
+        .form-group
+          label.col-sm-3.control-label(for='email') Email
+          .col-sm-7
+            input.form-control(type='email', name='email', id='email')
+        .form-group
+          label.col-sm-3.control-label(for='password') New Password
+          .col-sm-7
+            input.form-control(type='password', name='password', id='password')
+        .form-group
+          label.col-sm-3.control-label(for='confirmPassword') Confirm Password
+          .col-sm-7
+            input.form-control(type='password', name='confirmPassword', id='confirmPassword')
+        .form-group
+          .col-sm-offset-3.col-sm-4
+            button.btn.btn-default(type='submit')
+              i.fa.fa-lock
+              | Change Password
+
+
+append end-script
+  script.
+    function deleteId(id){
+      var r = confirm("Are you sure to delete class ?");
+      if(r==true){
+         window.location.href = '/class/delete/' + id;
+      }
+    }
+    $('#bt-new').click(function() {
+        var newClass = {
+            classId: $('#classId').val(),
+            courseId: '#{courseId}'
+        };
+        fetch('/class', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newClass),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => console.log('Success:', response)); 
+        
+    })

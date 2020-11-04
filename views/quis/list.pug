@@ -1,0 +1,66 @@
+extends ../layout
+
+block content
+    .page-header
+        h3 Quis List
+        button.btn.btn-link(type='button' data-toggle='modal' data-target='#exampleModalCenterQuis')
+            i.fa.fa-plus-circle
+            | Add New Class
+    .container
+        table.table
+        each ex, idx in quis
+            tr
+            td
+                a(href='/quis/'+ex._id)= ex.id
+            td= ex.title
+            td= ex.isMultiple
+            td= ex.answerOne
+            td= ex.answerTwo
+                each test in ex.question
+                    p=test['ask']
+                    p=test['answer']
+                    p=test['score']
+
+
+    #exampleModalCenterQuis.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalCenterTitle' aria-hidden='true')
+        form.form-horizontal
+            .modal-dialog.modal-dialog-centered.modal-add-course(role='document')
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLongTitle.modal-title Exercise
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') &times;
+                    .modal-body
+                        form.form-horizontal
+                        .form-group
+                            .col-sm-12
+                                input.form-control(type='text', name='title', id='title', placeholder='Class ID',autocomplete='off')
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                        button#bt-new.btn.btn-primary Save changes
+
+
+
+append end-script
+  script.
+    $('#bt-new').click(function() {
+        var newQuis = {
+            title : $('#title').val(),
+            courseId : '#{courseId}'
+        };
+        fetch('/quis', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newQuis),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {console.log('Success:', response); window.location.href = '/course';}); 
+    return false;
+    }) 
+
+
+

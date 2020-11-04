@@ -1,0 +1,72 @@
+.avbar.navbar-default
+  .container
+    .navbar-header
+      button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='/home')
+        //-  i.fa.fa-cube
+        //- | SPELL IDE
+
+        img(src="https://unhas.ac.id/assets/img/favicon.png", style="width:10%; float:left; margin-top : -3px; margin-right:10px")
+        | UBICON LABS 
+
+    .collapse.navbar-collapse
+      
+      ul.nav.navbar-nav.navbar-right
+        if !user
+          li(class=(title === 'Login') ? 'active' : undefined)
+            a(href='/login') Login
+          li(class=(title === 'Create Account') ? 'active' : undefined)
+            a(href='/signup') Create Account
+        else
+          li(class=(title === 'Account Management') ? 'active' : undefined)
+            a(href='#' data-toggle='dropdown')
+              span Hello,&nbsp
+              span=user.profile.name || user.email || user.id
+              span &nbsp(
+              span=user.role
+              span )
+              if user.profile.picture
+                img.avatar(src=user.profile.picture)
+              else
+                img.avatar(src=user.gravatar(60))
+              i.fa.caret.down
+              ul.dropdown-menu
+                li
+                  a(href='/account') My Account
+                li.divider
+                li
+                  a(href='/logout') Logout
+      ul.nav.navbar-nav.navbar-right
+        li
+          a(href='/course') Courses 
+      ul.nav.navbar-nav.navbar-right
+        if(user.role!='student')
+          li
+            a(href='/class') Classes 
+
+        // li
+          // if(user.role=='student')
+            // a(href='/class ') Exercises
+          // else
+            // a(href='/class ') Classes
+        
+      
+      
+      
+      //- ul.nav.navbar-nav.navbar-right
+      //-   li
+      //-     a(href='/member') Member
+
+      //- ul.nav.navbar-nav.navbar-right
+      //-   li
+      //-     a(href='/research') Research
+
+      //- ul.nav.navbar-nav.navbar-right
+      //-   li
+      //-     a(href='/home ') Home
+      //- ul.nav.navbar-nav.navbar-right
+

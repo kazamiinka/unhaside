@@ -1,0 +1,76 @@
+extends ../layout
+
+block content
+  .container
+    .page-header(data-id=ex._id)
+      h3 #{title}'s Exercises
+      h5 Created by #{user.email}
+
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item(aria-current="page")
+          a(href="/course")
+            | All Courses
+        li.breadcrumb-item(aria-current="page")
+          a(href="/course/"+ex._id)
+            | #{title}'s Course
+        li.breadcrumb-item.active(aria-current="page")
+          | Add Exercises
+          
+    if (user.role == 'teacher')
+    form.form-horizontal
+      .form-group
+        label.col-sm-2.control-label(for='title') Exercise Title
+        .col-sm-7
+          input.form-control(type='text', name='title', id='title', placeholder=' Title',autocomplete='off')
+          // ----------------------------------------------
+          // Add new select form for add module exercise
+      .form-group
+        label.col-sm-2.control-label(for='title') Exercise Module
+        .col-sm-7
+          select#parentId.form-control
+            each c in thisModules
+              if(JSON.stringify(c._id)==JSON.stringify(ex.parentId))
+                option(value=c._id, selected='selected') #{c.titleModule}
+              else
+                option(value=c._id) #{c.titleModule}  
+            //- option(value='kucing') test gila
+          //- input.form-control(type='text', name='title', id='title', placeholder='Name', value=ex.title)
+          // End Form
+          // ---------------------------------------------------
+        button#bt-new.col-sm-2.btn.btn-primary
+          i.fa.fa-plus-circle
+          | Add Exercise
+  
+append end-script
+  script.
+    function deleteId(id){
+      var r = confirm("Are you sure want to delete this exercise?");
+      if(r==true){
+         window.location.href = '/course/exercise/delete/#{ex._id}/' + id;
+      }
+    }
+    $('#bt-new').click(function() {
+        var newCourse = {
+            courseId : '#{ex._id}',
+            exerciseId : '#{ex._id}',
+            title : $('#title').val(),
+            parentId : $('#parentId').val(), // Hard Code
+        };
+
+        fetch('/course/exercise/#{ex._id}', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newCourse),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {console.log('Success:', response); window.location.href = '/course/#{ex._id}';}); 
+    return false;
+    })    
+
+
+

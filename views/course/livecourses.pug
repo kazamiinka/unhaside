@@ -1,0 +1,258 @@
+extends ../layout
+
+block content
+  .container
+    h2 Live Class
+    h4 #{title}
+    input#name(style='display:none;' value=user.profile.name)
+    input#level(style='display:none;' value=user.role)
+
+  .container(style='')
+    video#video-webcam(controls='' autoplay='' playsinline='' style='width: 675px;height:400px;border-radius:5px;border:1px solid black;margin-top:20px;')
+    .container#messages(style="overflow:scroll; height:400px;width:40%;float:right;margin-top:20px;")
+    br
+    button#btnRTC.col-sm-12.col-md-2.btn.btn-primary(style='margin-right:1px')
+          i.fa.fa-video-camera &nbsp Broadcast Your Video
+
+    button#btnScreen.col-sm-12.col-md-2.btn.btn-primary(style='margin-right:1px')
+          i.fa.fa-share &nbsp Share Your Screen
+
+    button#bt-new.col-sm-12.col-md-2.btn.btn-primary(style='margin-right:10px')
+          i.fa.fa-file &nbsp Share Files
+
+    button#btnSubmit.col-xs-4.col-md-1.btn.btn-danger(type='submit')
+          i.fa.fa-send &nbsp Send
+    .form-group
+      input.form-control#txt(type='text' required placeholder='Type Here...' style="width:40%;float:right")
+  
+  append end-script
+    script(src='/socket/socket.io.js')
+    script(src='https://www.webrtc-experiment.com/common.js')
+    script.
+      $(document).ready(() => {
+
+        if($('#level').val() === 'teacher' ){
+          $('#video-webcam').prop('muted', true);
+        }
+        
+        var socket = io();
+        var name = $('#name').val();
+          //If Send Button Clicked
+          //Send Name and Msg in Other Client
+        $('#btnSubmit').click(() => {
+          if($('#txt').val() === "" ){
+            return false;
+          }else{
+            socket.emit('chat message', name + ' : ' + $('#txt').val());
+            //Clear Textbox
+            $('#txt').val('');
+          }  
+        });
+
+        //RTC VideoCAM
+
+        $('#btnRTC').click(() => {  
+          var video = document.querySelector('#video-webcam');
+          var constrainedWidth = 400, constraineHeight = 675;
+
+          //ICE CANDIDATE
+          var pc = new RTCPeerConnection({
+              //- "iceServers": [{"url": "stun:stun.l.google.com:19302"}]
+          });
+          var tes;
+
+          pc.onicecandidate = (event) => {
+              console.log("Candidate Generated : ");
+              console.log(event.candidate);
+              var tes = event.candidate;
+          };
+
+          console.log(tes);
+
+          //END Candidate
+
+          var video_constraints = {
+            "mandatory": {
+              "maxWidth" : constrainedWidth,
+              "maxHeight" : constraineHeight,
+              "maxFrameRate" : "10"
+            },"optional" : []
+          }
+
+          navigator.getUsermedia = navigator.getUsermedia || navigator.webkitGetUserMedia || navigator.mediaDevices.getUsermedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+          if(navigator.getUsermedia){
+            navigator.getUsermedia({
+              video:video_constraints,
+              audio:true
+            }, handleVideo, videoError);
+          }
+
+
+          function handleVideo(stream){
+            // video.src = window.URL.revokeObjectURL(stream);
+            video.srcObject = stream;
+            // video.src = window.URL.revokeObjectURL(stream);
+            console.log(stream);
+            pc.createOffer(
+              (offer) => {
+                pc.setLocalDescription(offer);
+                console.log("sdp : ")
+                console.log(offer.sdp);
+                socket.emit('ices', offer.sdp);
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+
+            pc.onicecandidate = function (event) {
+                if (!event.candidate) console.log(pc.localDescription.sdp);
+
+                console.log(event.candidate);
+            };
+
+          }
+
+          function videoError(e){
+            alert("Something Wrong !");
+          }
+            
+        });
+
+        //END VideoCAM
+
+
+        //BEGIN SCREEN Share
+
+        var video = document.querySelector('#video-webcam');
+          var button = document.querySelector('#btnScreen');
+
+          button.onclick = () => {
+            this.disabled = true;
+
+            invokeGetDisplayMedia((screen) => {
+              addStreamStopListener(screen, () => {
+                location.reload();
+              });
+
+            video.srcObject = screen;
+            
+            // var _capabilities = screen.getTracks()[0].getCapabilities();
+            // capabilities.value = 'capabilities:\n\n' + JSON.stringify(_capabilities, null, '\t');
+            // capabilities.style.display = '';
+
+            // var _settings = screen.getTracks()[0].getSettings();
+            // settings.value = 'settings:\n\n' + JSON.stringify(_settings, null, '\t');
+            // settings.style.display = '';
+          }, (e) => {
+            button.disabled = false;
+            var error = {
+              name: e.name || 'UnKnown',
+              message: e.message || 'UnKnown',
+              stack: e.stack || 'UnKnown'
+            };
+            if(error.name === 'PermissionDeniedError'){
+              if(location.protocol !== 'https:'){
+                error.message = 'Please use HTTPs.';
+                error.stack = 'HTTPs is required';
+              }
+            }
+            console.error(error.name);
+            console.error(error.message);
+            console.error(error.stack);
+            alert('Unable to Capture your screen.\n' + error.name + '\n' + error.message + '\n' + error.stack);
+            });//tanda
+          };
+
+          if(!navigator.getDisplayMedia && !navigator.mediaDevices.getDisplayMedia){
+            var error = "You Browser does NOT support getDisplayMedia API.";
+            document.querySelector('h1').innerHTML = error;
+            document.querySelector('h1').style.color = 'red';
+            document.querySelector('#videoStream').style.display = 'none';
+            button.style.display = 'none';
+            throw new Error(error);
+          }
+
+          function invokeGetDisplayMedia(success, error){
+            var displayMediaStreamConstraints = {
+               video: {
+                    width: screen.width,
+                    height: screen.height,
+                    displaySurface: 'monitor', // monitor or window or application or browser
+                    logicalSurface: true,
+                    frameRate: 30,
+                    aspectRatio: 1.77,
+                    cursor: 'always', // always or never or motion
+                }, audio:true
+            };
+
+            if(navigator.mediaDevices.getDisplayMedia) {
+                  navigator.mediaDevices.getDisplayMedia(displayMediaStreamConstraints).then(success).catch(error);
+              }
+              else {
+                  navigator.getDisplayMedia(displayMediaStreamConstraints).then(success).catch(error);
+              }
+
+          }
+
+          function addStreamStopListener(stream, callback) {
+              stream.addEventListener('ended', function() {
+                  callback();
+                  callback = function() {};
+              }, false);
+              stream.addEventListener('inactive', function() {
+                  callback();
+                  callback = function() {};
+              }, false);
+              stream.getTracks().forEach(function(track) {
+                  track.addEventListener('ended', function() {
+                      callback();
+                      callback = function() {};
+                  }, false);
+                  track.addEventListener('inactive', function() {
+                      callback();
+                      callback = function() {};
+                  }, false);
+              });
+          }
+          
+        //END SCREEN SHARE
+
+        $("#txt").on('keyup', (e) => {
+          if(e.keyCode === 13){
+              if($('#txt').val() === "" ){
+                return false;
+              }else{
+                socket.emit('chat message', name + ' : ' + $('#txt').val());
+                //Clear Textbox
+                $('#txt').val('');
+              }  
+          }
+        });
+
+        //msg from server to client
+        var textBox = document.getElementById('txt');
+        textBox.addEventListener('keypress', (e) => {
+            socket.emit('typing', 'Someone Typing...');
+        });
+
+        textBox.addEventListener('blur', (e) => {
+            socket.emit('typing', 'Type Here...');
+        });
+
+        socket.on('chat message', (msg) => {
+            $('#messages').append($('<h6>').text(msg));
+        });
+
+        socket.on('typing', (msg) => {
+            $('#txt').attr('placeholder', msg);
+        });
+
+        socket.on('ices', (msg) => {
+          $('#messages').append($('<h6>').text(msg));
+        });
+
+
+      })
+
+    

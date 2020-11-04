@@ -1,0 +1,103 @@
+extends ../layout
+
+append page-style
+    style.
+        .deadline {
+            display: inline-block;
+            margin-left: .5rem;
+            font-weight: normal;
+            font-size: 75%;
+        }
+
+block content
+    .container
+        .page-header
+            if inClass
+                if exerciseGroups
+                    h3 Exercise List
+                else
+                  .alert.alert-warning(role='alert') 
+                    | No exercise, yet.
+                    | Please wait for a moment...
+            else
+                .alert.alert-warning(role='alert') 
+                  | Oops... You are not assigned in a class, yet.
+                  | Please wait a moment...
+
+        //- .list-group
+        //-  if exerciseGroups
+        //-     each group in exerciseGroups
+        //-         each ex, idx in group.exercises
+        //-             a.list-group-item.list-group-item-action.flex-column.align-items-start.active(href='/work/exercise/'+ex._id id=group.id)
+        //-                 .d-flex.w-100.justify-content-between
+        //-                     h5.mb-1.exercise-title(data-id=ex._id, data-deadline=ex.deadline) 
+        //-                         | #{ex.title}
+        //-                         span.badge.badge-primary.badge-pill.deadline 
+        //-                         |
+        //-                 p.mb-1
+        //-                         //- a(href='/work/exercise/'+ex._id) Here
+        //-                 hr
+        //- a.list-group-item.list-group-item-action.flex-column.align-items-start.active(href='#')
+        //-  .d-flex.w-100.justify-content-between
+        //-     h5.mb-1 List group item heading
+        //-         span.badge.badge-primary.badge-pill 14
+        //-  p.mb-1
+        //-     | Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.
+        //-     small Donec id elit non mi porta.
+        //- hr
+        //- a.list-group-item.list-group-item-action.flex-column.align-items-start.active(href='#')
+        //-  .d-flex.w-100.justify-content-between
+        //-     h5.mb-1 List group item heading
+        //-         span.badge.badge-primary.badge-pill 14
+        //-  p.mb-1
+        //-     | Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.
+        //-     small Donec id elit non mi porta.
+
+        //- ul#exercise-head.nav.nav-pills
+        //-     if exerciseGroups
+        //-         each group in exerciseGroups
+        //-             li(role='presentation')
+        //-                 a(href='#'+group.id)= group.id
+
+        if exercise
+            each exer in exercise
+                a(href='/work/exercise/'+exer._id)= exer.title
+        if exerciseGroups
+            each group in exerciseGroups
+                .exercise-group(id=group.id)
+                    each ex, idx in group.exercises
+                        .exercise-title(data-id=ex._id, data-deadline=ex.deadline)
+                            a(href='/work/exercise/'+ex._id)= ex.title
+                            span.deadline.badge.badge-primary.badge-pill(style="float:right;background-color:red")
+                                |
+                        div.exercise-text!= ex.instruction
+            br
+            .card
+                .alert.alert-danger.alert-dismissible(role='alert')
+                    button.close(type='button' onclick='this.parentNode.parentNode.removeChild(this.parentNode);' data-dismiss='alert')
+                        span(aria-hidden='true') &times;
+                        span.sr-only Close
+                    strong
+                        i.fa.fa-warning
+                        |  Info!
+                    marquee
+                        p(style='font-family: Impact; font-size: 12pt')
+                        | Spell IDE's Survey ! 
+                        a(href='https://docs.google.com/forms/d/e/1FAIpQLSdPMIrk-GgOh3ipR1_X3uEkn2PHGec1eju0kf6XzjL_DA44Dg/viewform')
+                            | click here.
+                        |        We are collecting your edit and run data for the instructors dashboard. We may use the anonymized data for later research and analytics.                  
+            
+append end-script
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.js')
+    script.
+        function drawExpire(idx, el) {
+            const deadlineTime = moment(this.dataset.deadline)
+            this.querySelector('.deadline').setAttribute('title', deadlineTime.format('llll'))
+            this.querySelector('.deadline').innerHTML = 'deadline: '+deadlineTime.from()
+            if (deadlineTime.diff() < 0)
+                this.querySelector('a').style.color = 'gray';
+        }
+        $('.exercise-title').each(drawExpire)
+        setInterval(function() {
+            $('.exercise-title').each(drawExpire);
+        }, 60000);

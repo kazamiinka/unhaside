@@ -1,0 +1,53 @@
+extends ../layout
+
+block content
+    .container
+        .page-header(data-id=ex._id)
+            h3 #{title}'s Courses
+            nav(aria-label="breadcrumb")
+                ol.breadcrumb
+                    li.breadcrumb-item(aria-current="page")
+                        a(href="/course")
+                            | All Courses
+                    li.breadcrumb-item(aria-current="page")
+                        a(href="/course/" + ex.courseId)
+                            | #{courseTitle}
+                    li.breadcrumb-item.active(aria-current="page")
+                        | #{title}'s Quis 
+        form.form-horizontal.form-add-quis
+                    .modal-dialog.modal-dialog-centered.modal-add-course(role='document', style="width:100%")
+                        .modal-content
+                            .modal-header
+                                h5#exampleModalLongTitle.modal-title #{ex.title }
+                                button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                    span(aria-hidden='true') &times;
+                                .form-group.new-question
+                                        .col-sm-12
+                                            input.form-control(type='text', name='quisTitle', id='quisTitle', placeholder='Class ID',autocomplete='off', value=ex.title)
+                            each question in ex.question
+                                .modal-body
+                                    .form-group.new-questionAppend    
+                                        .col-sm-12.newQuestionTitle
+                                            .addNewQuestion
+                                                - var text=question.ask
+                                                p!=text
+                                                br
+                                                each answer in question.optionAnswer
+                                                    .col-md-9
+                                                        .form-group.row.quis-option-answer
+                                                        label.col-sm-1(for='staticEmail') #{answer.option}
+                                                        .col-sm-7
+                                                            input#questionAnswer.form-control(type='text', value=answer.multiple)
+                                                        label.col-sm-1(for='staticEmail') is Answer?
+                                                        .col-sm-2
+                                                            select#isAnswer.form-control(name='questionAnswer', disabled)
+                                                                option(value='0',selected= answer.isAnswer == false) No
+                                                                option(value='1',selected= answer.isAnswer == true ) Yes
+                                                            br
+                                                .col-md-9.score-question
+                                                    input.form-control(type='number' name='score' placeholder='score',value=question.score)
+                                                    br
+                                                | &apos;
+                            .modal-footer
+                                    //- button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                                    //- button#bt-new-quis.btn.btn-primary Save changes

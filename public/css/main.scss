@@ -1,0 +1,270 @@
+@import "themes/flatly/variables";
+
+@import "lib/bootstrap/bootstrap";
+@import "lib/font-awesome/font-awesome";
+
+@import "themes/flatly/flatly";
+
+// Scaffolding
+// -------------------------
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  // padding-top: 60px;
+  margin-bottom: 75px;
+  box-sizing: border-box;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 45px;
+  line-height: 45px;
+
+  p, ul {
+    margin-bottom: 0;
+  }
+}
+
+// Input Fields
+// -------------------------
+
+textarea {
+  resize: vertical;
+}
+
+// Navbar
+// -------------------------
+
+.navbar-nav img {
+  width: 30px;
+  height: 30px;
+  margin: -15px 15px -15px;
+}
+
+// Alerts
+// -------------------------
+
+.alert {
+  margin-top: 20px;
+}
+
+// Thumbnails
+// -------------------------
+
+.thumbnail {
+  padding: 0;
+  border-radius: 0;
+  box-shadow: 0 0 5px #ccc, inset 0 0 0 #000;
+}
+
+// Font Icons
+// -------------------------
+
+.fa {
+  margin-right: 6px;
+}
+
+// code editor
+
+#editor-container {
+  width: 100%;
+  padding: 0 2%;
+  min-height: 600px;
+  margin-bottom: 7px;
+  display: flex;
+  flex-direction: column;
+
+  .xwide-container {
+    width: 95%;
+    margin: auto;
+  }
+}
+
+#work-editor-header {
+  flex: 0 1 auto;
+}
+
+#work-editor-container {
+  flex: 1 1 auto;
+  padding-bottom: 10px;
+}
+
+#run-result {
+  min-height: 300px;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+#run-iframe {
+  // min-height: 500px;
+  flex: 1 0 auto;
+  min-width: 100%;
+}
+
+#run-logresult {
+  display: none;
+  background-color: white;
+  position: absolute;
+  right: 0;
+  height: 100%;
+  width: 50%;
+  overflow: scroll;
+  border: 3px lightgrey solid;
+  padding: .5rem;
+  counter-reset: log-line-counter;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 80%;
+}
+
+#run-logresult .log-line:before {
+  display: inline-block;
+  content: counter(log-line-counter);
+  counter-increment: log-line-counter;
+  width: 3rem;
+  text-align: right;
+  padding-right: 1rem;
+}
+
+#run-logresult .log-line:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+#run-logresult .line-error {
+  color: red;
+}
+
+.editor-resizable {
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+}
+.editor {
+  flex: 1 0 auto;
+  // display: flex;
+  height: 500px;
+  //min-height:100%;
+  width: 100%;
+  margin: auto;
+  // padding: 0 0 2em 0;
+  overflow: hidden;
+  background-color: #2F3129;
+}
+
+.editor-command {
+  flex: 0 0 auto;
+  margin: 10px 0;
+}
+
+.editor .tab {
+  float: left;
+  // flex: 0 1 auto;
+  height: 100%;
+  margin: 0;
+  padding: 0 0 2em 0;
+  background-color: cadetblue;
+  // border-width: 0 20px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.editor-2 {
+  width: 50%;
+}
+
+.editor-3 {
+  width: 33.33%;
+}
+
+.editor-4 {
+  width: 25%;
+}
+
+.tab-border {
+  border-left: 2px solid darkcyan;
+  border-right: 2px solid darkcyan;
+}
+
+.editor-header {
+  flex: 1 1 auto;
+  vertical-align: middle;
+  font-size: 1.33rem;
+  font-weight: bold;
+  height: 1.5em;
+  width: 100%;
+  padding-left: 2em;
+  overflow: hidden;
+}
+
+.editor-left {
+  flex: 0 0 auto;
+  width: 5px;
+  height: 100%;
+  // transition-property: width;
+  // transition-duration: 100ms;
+}
+
+.editor-left-text {
+  width: 20em;
+  vertical-align: middle;
+  font-size: 1.33rem;
+  font-weight: bold;
+  margin: 0 0 0 1em;
+  // transition-property: display;
+  // transition-duration: 100ms;
+}
+
+.spell-editor {
+  flex: 1 1 auto;
+  height: 100%;
+  // transition-property: width;
+  // transition-duration: 100ms;
+}
+
+.vertical-text {
+	transform: rotate(90deg);
+	transform-origin: left;
+}
+
+.left-space-1rem {
+  margin-left: 1rem;
+}
+
+// student exercise list
+.exercise-group {
+  background-color: #ddd;
+  padding: .5rem;
+  margin: 1rem 0;
+  border: solid 1px lightgrey;
+}
+
+.exercise-title {
+  font-size: 120%;
+  font-weight: bold;
+  margin: 1rem 0 .2rem 0;
+}
+
+.exercise-title:first-child {
+  margin: 0 0 .2rem 0;
+}
+
+
+#log-text {
+  display: inline-block;
+  width: 4rem;
+  color: black;
+}
+
+#log-linecount {
+  display: inline-block;
+  padding: 0 .5rem;
+  background: red;
+  color: white;
+  text-align: center;
+  border-radius: 50%;
+}

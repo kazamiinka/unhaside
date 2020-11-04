@@ -1,0 +1,233 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+  meta(name='description' content='')
+  meta(name='author' content='')
+  title HOME - E-Learning UBICON LABS
+  // Bootstrap core CSS
+  link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous')
+  link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css')
+  // Custom styles for this template
+  link(href='css/full-width-pics.css' rel='stylesheet')
+  link(rel='shortcut icon', href='https://unhas.ac.id/assets/img/favicon.png')
+  link(rel='stylesheet', href='/css/main.css')
+  link(rel='stylesheet', href='/jq-ui/custom/jquery-ui.css')
+  link(rel='stylesheet', href='/summernote/dist/summernote-lite.css')
+  link(rel='stylesheet', href='/css/modifsummernote.css')
+  //- link(rel='stylesheet', href='/summernote/dist/summernote.css')
+  link(rel='stylesheet', href='/summernote-prettyprint-plugin/bower_components/summernote/dist/summernote.css')
+  link(rel='stylesheet', href='/summernote-prettyprint-plugin/src/css/prism.css')
+  link(rel='stylesheet', href='/summernote-prettyprint-plugin/bower_components/prism/themes/prism-coy.css')
+  link(rel='stylesheet', href='/css/cardbootstrap.css')
+  link(rel='stylesheet', href='/css/btnoutlinebootstrap.css')
+  //- link(rel='stylesheet', href='https://bootswatch.com/4/materia/bootstrap.min.css')
+  //- link(rel='stylesheet', href='https://bootswatch.com/4/materia/bootstrap.css')
+  //- link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css', integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T', crossorigin="anonymous")
+
+  style(type='text/css').
+    a {
+      color : #032b5f;
+    }
+    a:hover {
+      text-decoration : none;
+      color : #057a63;
+    }
+    a:click {
+      text-decoration : none;
+    }
+    .badge {
+      background-color : #032b5f;
+    }
+    .badge-red {
+      background-color : #e74c3c;
+    }
+    .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+    .avatar {
+      vertical-align: middle;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+      
+  style(type='text/css').
+    #button {
+    display: inline-block;
+    background-color: #FF9800;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    border-radius: 4px;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    transition: background-color .3s,
+    opacity .5s, visibility .5s;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1000;
+    }
+    #button::after {
+    content: "\f077";
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 2em;
+    line-height: 50px;
+    color: #fff;
+    }
+    #button:hover {
+    cursor: pointer;
+    background-color: #333;
+    }
+    #button:active {
+    background-color: #555;
+    }
+    #button.show {
+    opacity: 1;
+    visibility: visible;
+    }
+    /* Styles for the content section */
+    .content {
+    width: 77%;
+    margin: 50px auto;
+    font-family: 'Merriweather', serif;
+    font-size: 17px;
+    color: #6c767a;
+    line-height: 1.9;
+    }
+    @media (min-width: 500px) {
+    .content {
+    width: 43%;
+    }
+    #button {
+    margin: 30px;
+    }
+    }
+    .content h1 {
+    margin-bottom: -10px;
+    color: #03a9f4;
+    line-height: 1.5;
+    }
+    .content h3 {
+    font-style: italic;
+    color: #96a2a7;
+    }
+// Navigation
+if user
+  include partials/header
+
+  include partials/flash
+  block content
+
+else
+  span.header-top
+  nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.fixed-top
+  .container
+    img(src="https://unhas.ac.id/assets/img/favicon.png", style="height:100%; float:left; margin-top : -3px; margin-right:10px")
+    a.navbar-brand(href='/') UBICON LABS
+    button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarResponsive' aria-controls='navbarResponsive' aria-expanded='false' aria-label='Toggle navigation')
+      span.navbar-toggler-icon
+    #navbarResponsive.collapse.navbar-collapse
+      ul.navbar-nav.ml-auto
+        li.nav-item
+          a.nav-link(href='/')
+            | Home
+            span.sr-only (current)
+        li.nav-item
+          a.btn.btn-success(href='/home') Login
+// Header - set the background image for the header in the line below
+#carouselExampleIndicators.carousel.slide(data-ride='carousel')
+  ol.carousel-indicators
+    li.active(data-target='#carouselExampleIndicators' data-slide-to='0')
+    li(data-target='#carouselExampleIndicators' data-slide-to='1')
+    li(data-target='#carouselExampleIndicators' data-slide-to='2')
+  .carousel-inner
+    .carousel-item.active
+      img.d-block.w-100(src='https://eng.unhas.ac.id/mesin/upload/5d3202a54986c.png' alt='First slide')
+      .carousel-caption.d-none.d-md-block
+        h5 Selamat Datang
+        p UBICON LABS
+    .carousel-item
+      img.d-block.w-100(src='https://eng.unhas.ac.id/mesin/upload/5d3202a54986c.png' alt='Second slide')
+      .carousel-caption.d-none.d-md-block
+        h5 Selamat Datang
+        p UBICON LABS
+    .carousel-item
+      img.d-block.w-100(src='https://eng.unhas.ac.id/mesin/upload/5d3202a54986c.png' alt='Third slide')
+      .carousel-caption.d-none.d-md-block
+        h5 Selamat Datang
+        p UBICON LABS
+  a.carousel-control-prev(href='#carouselExampleIndicators' role='button' data-slide='prev')
+    span.carousel-control-prev-icon(aria-hidden='true')
+    span.sr-only Previous
+  a.carousel-control-next(href='#carouselExampleIndicators' role='button' data-slide='next')
+    span.carousel-control-next-icon(aria-hidden='true')
+    span.sr-only Next
+// Content section
+section.py-5
+  .container
+    h2 E-Learning Departemen Teknik Informatika
+    p.lead Sambutan Ketua - UBICON LABS
+    p
+      | Assalamualaikum wr wb. Puji syukur marilah kita panjatkan kehadirat Allah SWT yang senantiasa melimpahkan rahmat, taufik, dan Hidayah-Nya kepada kita semua sehingga website Departemen Teknik Informatika ini dapat dikembangkan. Shalawat serta salam marilah kita curahkan kepada junjungan kita Nabi Muhammad SAW beserta para sahabat dan kerabatnya. Departemen Teknik Informatika Fakultas Teknik Universitas Hasanuddin memiliki tujuan yaitu tersedianya sumberdaya manusia di bidang Informatika yang memiliki kemampuan berkompetisi mendapatkan lapangan pekerjaan ataupun menciptakan lapangan pekerjaan secara mandiri dan kreatif. Departemen kami menyediakan program yang berkualitas dalam melakukan pendidikan bidang teknik informatika yang didukung oleh fakultas maupun universitas. Sistem pengajaran yang terbagi menjadi pembelajaran dalam ruang kelas dan praktikum yang dipandu oleh 11 staf pengajar dengan kualifikasi akademik yang sangat baik terdiri 6 Dr, dan memiliki 3 kelompok bidang keahlian yaitu Cloud Computing and Internet Engineering, IoT and Parallel Computing dan Artificial Intelligence and Multimedia Processing. Semoga dengan adanya website ini dapat menjadi sebuah wadah komunikasi baik antara pihak Departemen Teknik Informatika FT-UH dengan segenap Civitas Akademika maupun siapa saja yang ingin mengetahui lebih jauh tentang Departemen Teknik Informatika FT-UH. Dengan terjalinnya komunikasi yang baik, tentunya Departemen Teknik Informatika FT-UH akan dikenal secara luas. Kritik dan saran dari pengunjung website ini sangat kami harapkan demi kemajuan dari Departemen Teknik Informatika FT-UH.
+    a(href='/course')
+      button.btn.btn-success Go to Course
+// Image Section - set the background image for the header in the line below
+section.py-5.bg-image-full(style="background-image: url('https://unsplash.it/1900/1080?image=1081');")
+  // Put anything you want here! There is just a spacer below for demo purposes!
+  div(style='height: 200px;')
+// Content section
+section.py-5
+  .container
+    h1 Section Heading
+    p.lead Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    p
+      | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, suscipit, rerum quos facilis repellat architecto commodi officia atque nemo facere eum non illo voluptatem quae delectus odit vel itaque amet.
+  a#button
+// Footer
+footer.py-5.bg-dark(style='height:80px')
+  .container
+    p.m-0.text-center.text-white Copyright &copy; 2020 Universitas Hasanuddin, Makassar. Design by Admin
+  // /.container
+
+#exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+  .modal-dialog(role='document')
+    .modal-content
+      .modal-header
+        h5#exampleModalLabel.modal-title Modal title
+        button.close(type='button' data-dismiss='modal' aria-label='Close')
+          span(aria-hidden='true') &times;
+      .modal-body
+        | ...
+      .modal-footer
+        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+        button.btn.btn-primary(type='button') Save changes
+
+// Bootstrap core JavaScript
+script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js')
+script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js' integrity='sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49' crossorigin='anonymous')
+script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js' integrity='sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy' crossorigin='anonymous')
+script(src='/pict/bootstrap.bundle.min.js')
+
+
+script(type='text/javascript').
+  var btn = $('#button');
+  $(window).scroll(function() {
+  if ($(window).scrollTop() > 300) {
+  btn.addClass('show');
+  } else {
+  btn.removeClass('show');
+  }
+  });
+  btn.on('click', function(e) {
+  //- e.preventDefault();
+  //- $('html, body').animate({scrollTop:0}, '300');
+  //- alert('#')
+  //- var body = $("html, body");
+  //- body.stop().animate({scrollTop:0}, 500);
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+  });

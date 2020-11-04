@@ -1,0 +1,173 @@
+extends ../layout
+
+append page-style
+  style.
+
+    .hide {
+        display: none;
+    }
+
+    .student-summary {
+    }
+
+    .student-summary .student-link {
+        display: inline-block;
+        width: 8rem;
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    .student-summary .testlogs-summary::before {
+        content: 'T: ';
+    }
+
+    .student-summary .runlogs-summary::before {
+        content: 'R: ';
+    }
+
+    .student-summary .worklogs-summary::before {
+        content: 'E: ';
+    }
+
+    .student-summary .testlogs-summary, .student-summary .runlogs-summary, .student-summary .worklogs-summary {
+        //- font-size: 80%;
+        display: inline-block;
+        min-width: 18rem;
+        padding-left: .25rem;
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    .student-summary span {
+        display: inline-block;
+        min-width: 1.5rem;
+        padding: 0 .5rem;
+    }
+
+    .student-summary .client-addr, .student-summary .paste-char {
+        display: none;
+    }
+
+    .student-container {
+      margin: 1rem .5rem;
+      padding: .5rem 1rem;
+      background-color: #cccccc;
+    }
+
+    .student-container .student {
+        font-size: 120%;
+        padding-bottom: .25rem;
+    }
+
+    .work-container {
+        margin: 0 .5rem;
+        padding: .25rem 1rem;
+        border-top: 1px solid #aaaaaa;
+    }
+
+    .work-container:first-of-type {
+        border-top: 0px;
+    }
+
+    .testlogs, .worklogs, .runlogs {
+        margin: 0 0 0 0.5rem;
+    }
+
+    .testlogs span, .worklogs span, .runlogs span {
+      display: inline-block;
+      margin: 0 .25rem;
+      min-width: 2.5rem;
+      text-align: right;
+    }
+
+    span.rank {
+        text-align: center;
+    }
+
+    span.rank-1, span.rank-2, span.rank-3 {
+        font-weight: bold;
+    }
+
+    span.rank-20 {
+        background-color: mistyrose;
+    }
+
+    span.rank-30 {
+        background-color: crimson;
+        color: lightgray;
+    }
+
+    .testlogs::before {
+        display: inline-block;
+        width: 3rem;
+        content: 'test:';
+    }
+
+    .worklogs::before {
+        display: inline-block;
+        width: 3rem;
+        content: 'edit:';
+    }
+
+    .runlogs::before {
+        display: inline-block;
+        width: 3rem;
+        content: 'run:';
+    }
+
+    span.red-error {
+        color: #cc0000;
+        font-weigth: bold;
+    }
+
+    span.client-addr {
+        font-size: 80%;
+    }
+
+    span.update-time {
+        font-size: 80%;
+    }
+
+    span.right-align {
+        text-align: right;
+    }
+
+block content
+  .container
+    .page-header(data-class-id=classId, data-class-title=classTitle, data-user-id=userId)
+        h3#class-title Class Log Stats: #{classTitle}
+
+        .row.form-horizontal
+            .col-xs-3.col-sm-2
+                label.control-label(for='start-time') Start Time
+            .col-xs-6
+                input.form-control(type='text', name='start-time', id='start-time', placeholder='Start-Time')
+            .col-xs-3.col-sm-4
+                button#set-start-time.btn.btn-primary
+                    i.fa.fa-check
+                    | Set
+        
+
+    #stat-summary
+
+    #stat-details
+
+    #runlogs-display
+    
+    #worklogs-display
+    
+    #logs-details.modal.fade(tabindex='-1', role='dialog')
+        .modal-dialog(role=document)
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal')
+                    h4.modal-title Details
+                .modal-body
+                    p hello
+                .modal-footer
+                    button.btn.btn-primary(type='button',data-dismiss='modal')
+                        Close
+
+append end-script
+    script(src='https://d3js.org/d3.v5.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='/js/class-log-stats.js')

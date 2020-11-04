@@ -1,0 +1,244 @@
+extends ../layout
+
+block content
+  .container
+        .page-header(data-id=ex._id)
+            h3 Add Quis
+            nav(aria-label="breadcrumb")
+                ol.breadcrumb
+                    li.breadcrumb-item(aria-current="page")
+                        a(href="/course")
+                            | All Courses
+                    li.breadcrumb-item(aria-current="page")
+                        a(href="/course/" + ex.courseId)
+                            | #{ex.title}
+                    li.breadcrumb-item.active(aria-current="page")
+                        | Quis 
+                    li.breadcrumb-item.active(aria-current="page")
+                        | Add Quis 
+        form.form-horizontal.form-add-quis
+                    .modal-dialog.modal-dialog-centered.modal-add-course(role='document', style="width:100%")
+                        .modal-content
+                            .modal-header
+                                h5#exampleModalLongTitle.modal-title Quis
+                                button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                    span(aria-hidden='true') &times;
+                            .modal-body
+                                .form-group.new-question
+                                    .col-sm-12
+                                        textarea.form-control(type='text', name='quisTitle', id='quisTitle', placeholder='Quis Title',autocomplete='off')
+                                .form-group.new-questionAppend    
+                                    .col-sm-12.newQuestionTitle
+                                button#bt-new-question.btn.btn-primary Add Question
+                            .modal-footer
+                                button#btn-close.btn.btn-secondary(type='button', data-id=ex.id data-dismiss='modal') Close
+                                button#bt-new-quis.btn.btn-primary(data-id=ex.id) Save changes
+
+
+append end-script
+  script(src='/ckeditor/ckeditor.js')
+  script.
+    var form = $('.form-add-quis')
+    var num = 0;
+    function create_UUID($key){
+        var dt = new Date().getTime();
+        var uuid = ($key + 'xxxxxxxx').replace(/[xy]/g, function(c) {
+            var r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+    }
+
+   form.find('#btn-close').on('click',function(){
+        window.location.href='/course/'+$(this).data('id')
+    })
+
+    form.find('#bt-new-question').on('click', function(e){
+        num = num + 1
+        e.preventDefault()
+        var template =  '<div class="addNewQuestion'+num+' newQuestion">'+
+                        '<textarea class="form-control" name="question" id="question" placeholder="Type Question" autocomplete="off"></textarea><br>' + 
+                        '<div class="col-md-9">' +
+                        '<div class="form-group row quis-option-answer">' +
+                            '<label for="staticEmail" class="col-sm-1 quis-option">A</label>' +
+                            '<div class="col-sm-7">' +
+                            '<input type="text" class="form-control" id="questionAnswer">' +
+                            '</div>'+
+                            '<label for="staticEmail" class="col-sm-1">is Answer?</label>' +
+                            '<div class="col-sm-2">' +
+                            '<select class="form-control" name="questionAnswer" id="isAnswer">' +
+                            '<option value="0">No</option>' + 
+                            '<option value="1">Yes</option>' +
+                            '</select>' + 
+                            '</div>'+
+                        '</div>'+
+                        '<div class="form-group row quis-option-answer">' +
+                            '<label for="staticEmail" class="col-sm-1 quis-option">B</label>' +
+                            '<div class="col-sm-7">' +
+                            '<input type="text" class="form-control" id="questionAnswer">' +
+                            '</div>'+
+                            '<label for="staticEmail" class="col-sm-1">is Answer?</label>' +
+                            '<div class="col-sm-2">' +
+                            '<select class="form-control" name="questionAnswerB" id="isAnswer">' +
+                            '<option value="0">No</option>' + 
+                            '<option value="1">Yes</option>' +
+                            '</select>' + 
+                            '</div>'+
+                        '</div>'+
+                        '<div class="form-group row quis-option-answer">' +
+                            '<label for="staticEmail" class="col-sm-1 quis-option">C</label>' +
+                            '<div class="col-sm-7">' +
+                            '<input type="text" class="form-control" id="questionAnswer">' +
+                            '</div>'+
+                            '<label for="staticEmail" class="col-sm-1">is Answer?</label>' +
+                            '<div class="col-sm-2">' +
+                            '<select class="form-control" name="questionAnswerA" id="isAnswer">' +
+                            '<option value="0">No</option>' + 
+                            '<option value="1">Yes</option>' +
+                            '</select>' + 
+                            '</div>'+
+                        '</div>'+
+                        '<div class="form-group row quis-option-answer">' +
+                            '<label for="staticEmail" class="col-sm-1 quis-option">D</label>' +
+                            '<div class="col-sm-7">' +
+                            '<input type="text" class="form-control" id="questionAnswer">' +
+                            '</div>'+
+                            '<label for="staticEmail" class="col-sm-1">is Answer?</label>' +
+                            '<div class="col-sm-2">' +
+                            '<select class="form-control" name="questionAnswerA" id="isAnswer">' +
+                            '<option value="0">No</option>' + 
+                            '<option value="1">Yes</option>' +
+                            '</select>' + 
+                            '</div>'+
+                        '</div>'+
+                        '</div>' +
+                        '<div class="col-md-9 score-question"><input class="form-control" type="number" name="score" placeholder="score"><br></div>'
+        $($('.newQuestionTitle')).append(template)
+        $('#question').summernote({
+        height: 300,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'italic', 'underline', 'clear']],
+          ['fontname', ['fontname']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['height', ['height']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'hr']],
+          ['insert', ['prettyprint']],
+          ['view', ['fullscreen', 'codeview']],
+          ['help', ['help']],
+          ['mybutton', ['myVideo']]
+        ],
+        buttons: {
+            myVideo: function(context) {
+                var ui = $.summernote.ui;
+                var button = ui.button({
+                    contents: '<i class="fa fa-video-camera"/>',
+                    tooltip: 'video',
+                    click: function() {
+                        var div = document.createElement('div');
+                        div.classList.add('embed-container');
+                        var iframe = document.createElement('iframe');
+                        iframe.src = prompt('Enter video url:');
+                        iframe.setAttribute('frameborder', 0);
+                        iframe.setAttribute('width', '100%');
+                        iframe.setAttribute('allowfullscreen', true);
+                        div.appendChild(iframe);
+                        context.invoke('editor.insertNode', div);
+                    }
+                });
+
+                return button.render();
+            }
+        }
+    });
+       
+    })
+
+    $(document).ready(function() {
+    
+    });
+
+    var question = $('.newQuestionTitle')
+    var num = 1
+
+    $('#bt-new-quis').click(function() {
+        var _this = $(this)
+        var courseId = _this.data('id');
+        var p = 0
+        var questionJsonData = []
+
+        _this.closest('.form-add-quis').find('.newQuestion').each(function(e){
+            var optionAnswer = []
+            var _thisOption = $(this)
+            _thisOption.find('.quis-option-answer').each(function(e){
+               
+                var this_option_answer = $(this)
+                var isAnswerVal = this_option_answer.closest('.form-group').find('#isAnswer').val()
+                console.log(this_option_answer.find('#questionAnswer').val())
+                var $key = 0
+                if(isAnswerVal == 1){
+                    $key = 1
+                }
+                var options = {
+                    option: this_option_answer.find('#questionAnswer').val(),
+                    isAnswer:this_option_answer.closest('.form-group').find('#isAnswer').val(),
+                    id_answer : create_UUID($key)
+                }
+                optionAnswer.push(options)
+            })
+            var question = {
+                ask:$(this).find('textarea[name="question"]').val(),
+                score:$(this).find('input[name="score"]').val(),
+                optionAnswer:optionAnswer
+            }
+            questionJsonData.push(question)
+
+        });
+        //- var questionJsonData = []
+
+        //- _this.closest('.form-add-quis').find('.addNewQuestion').each(function(e){
+        //-     var _it = $(this)
+        //-     var optionAnswerJsonData = []
+        //-     //- _it.find("#questionAnswer").each(function(){
+        //-         //- console.log(e.length)
+        //-         var dataOptionAnswer = 
+        //-         {
+        //-         option:_it.closest('.form-group').find('.quis-option').text(),
+        //-         multiple:_it.val(),
+        //-         isAnswer:_it.closest('.form-group').find('#isAnswer').val()
+        //-         }
+        //-         optionAnswerJsonData.push(dataOptionAnswer)
+        //-     //- })
+        //-     var questionJson =
+        //-     {
+        //-     ask:$(this).find('input[name="question"]').val(),
+        //-     score:$(this).find('input[name="score"]').val(),
+        //-     answer:$(this).find('input[name="answer"]').val(),
+        //-     optionAnswer: optionAnswerJsonData
+        //-     }
+        //-     questionJsonData.push(questionJson)
+        //- })
+
+       
+        //- console.log(optionAnswerJsonData)
+        var newQuis = {
+            title : $('#quisTitle').val(),
+            courseId : '#{ex._id}',
+            question : questionJsonData,
+        };
+        fetch('/quis', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newQuis),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {console.log('Success:', response); window.location.href = '/course/'+courseId;}); 
+    return false;
+    }) 

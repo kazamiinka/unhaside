@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 Exercise List
+
+  .container
+    table.table
+      each ex, idx in exercises
+        tr
+          td
+            a(href='/exercise/'+ex._id)= ex.id
+          td= ex.title
+          td= ex.instruction
+          td= ex.testcode
+          td= ex.html
+          td= ex.css
+          td= ex.js

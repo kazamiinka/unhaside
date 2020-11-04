@@ -1,0 +1,148 @@
+extends ../layout
+
+block content
+  .container
+    .page-header(data-id=ex._id)
+      h3 #{ex.titleModule} #{idSuccess}
+
+      - var text=ex.module
+      p!=text
+    
+    input.parentId(type="hidden" name="parentId")
+    //- input(type="text" name="comment")
+    
+
+
+   
+  .container
+    //- .row
+    //-   .media
+    //-     .media-body
+    //-       h2 Comment
+    //-   each disc in discussion
+    //-     .geser
+    //-       .media
+    //-         .media-left
+    //-           img.avatar(src=user.gravatar(60))
+    //-         .media-body
+    //-           h4.media-heading.title=disc.userName
+    //-           p.komen=disc.comment
+    //-             br
+    //-             p=prettyDate(disc.createdAt)
+                
+    .row
+      h3 Comment
+      .card
+          #headingFour.card-header
+            h5.mb-0.col-md-9
+              button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFive' aria-expanded='false' aria-controls='collapseThree')
+                | Komentar 
+                i.fa.fa-angle-down
+
+          #collapseFive.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
+              .card-body
+                .form-group.shadow-textarea
+                  label(for='exampleFormControlTextarea6')
+                  textarea#exampleFormControlTextarea6.form-control.z-depth-1(name="comment",rows='3' placeholder='Put your comment here')
+                  br
+                  button.btn.btn-success.add-comment(type='button') Submit
+                  hr.solid
+                ul.list-group
+                  if(discussion == 0)
+                    p Data not exist
+                  each disc in discussion
+                    li.list-group-item
+                      // i.fa.fa-circle
+                      .geser
+                        .media
+                          .media-left
+                            img.avatar(src=user.gravatar(60))
+                          .media-body
+                            h4.media-heading.title=disc.userName
+                            p.komen=disc.comment
+                              br
+                              p=prettyDate(disc.createdAt)
+                      hr.dashed
+                  -function prettyDate(dateString){
+                    //if it's already a date object and not a string you don't need this line:
+                    -var date = new Date(dateString);
+                    -var d = date.getDate();
+                    -var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+                    -var m = monthNames[date.getMonth()];
+                    -var y = date.getFullYear();
+                    -var h = date.getHours();
+                    -var mi = date.getMinutes();
+                    -return d+' '+m+' '+y +' '+h+':'+mi;
+                -}
+
+    #popUpScore.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            //- .modal-content
+            .alert.alert-success.fade.in
+              button.close(type='button', data-dismiss='alert')
+                i.fa.fa-times-circle-o
+              //- for success in messages.success
+              div Komentar Berhasil di tambahkan
+
+  
+
+
+
+ 
+append end-script
+  script.
+    var courseIds = '#{course.id}'
+    var moduleIds = $('.page-header').data('id')
+    console.log('/course/preview' + courseIds + '/' + moduleIds)
+    $('.add-comment').on('click',function(){
+      var _this = $(this);
+      var _val = _this.siblings('textarea[name="comment"]').val()
+      console.log(_val)
+
+      var newQuis = {
+            courseId : '#{course.id}',
+            parentId : '#{ex._id}',
+            userId : '#{user.id}',
+            userName:'#{user.profile.name || user.email}',
+            comment:_val
+        };
+        fetch('/discussion', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newQuis),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => { 
+            var courseId = $('.courseId').val()
+            console.log('Success:', response);
+            $('#popUpScore').modal('show');
+            setTimeout(function(){ 
+              window.location.href = '/course/preview/' + courseIds + '/' + moduleIds + '/success';
+            }, 1000);
+            
+        }); 
+    return false;
+    })
+
+  style.
+    .title {
+    font-size: 14px;
+    font-weight:bold;
+    }
+    .komen {
+    font-size:14px;
+    }
+    .geser {
+    margin-left:55px;
+    margin-top:5px;
+    }
+    hr.dashed {
+    border-top: 2px dashed #999;
+    }
+    hr.solid {
+    border-top: 2px solid #999;
+    }

@@ -1,0 +1,438 @@
+extends ../layout
+
+block content
+  #editor-container
+    #work-editor-header.page-header(data-work-id=work._id, data-student=work.student, data-exercise-id=exercise._id, data-exercise-deadline=exercise.deadline, data-savecount=work.savecount).wide-container
+        h3 Exercise: #{exercise.title}
+        div!= exercise.instruction
+
+    #command.editor-command
+        button#save.btn.btn-primary(role='button')
+          i.fa.fa-save
+          | Save
+        button#run.btn.btn-primary.left-space-1rem
+          i.fa.fa-play
+          | Run
+        if exercise.enablerunraw
+          button#run-window.btn.btn-primary.left-space-1rem
+            i.fa.fa-play
+            | Run in New Window
+        if exercise.testcode
+          button#run-test.btn.btn-primary.left-space-1rem.disabled
+            i.fa.fa-puzzle-piece
+            | Test
+
+    #work-editor-container.editor-resizable.wide-container
+      #work-editor.editor
+        #html-editor-tab.tab.editor-3(style="background-color:#D9D9D9;")
+          .editor-header HTML
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span HTML
+          #html-editor.spell-editor= work.html
+
+        #css-editor-tab.tab.editor-3(style="background-color:#D9D9D9;")
+          .editor-header CSS
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span CSS
+          #css-editor.spell-editor= work.css
+
+        #js-editor-tab.tab.editor-3(style="background-color:#D9D9D9;")
+          .editor-header JavaScript
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span JavaScript
+          #js-editor.spell-editor= work.js
+
+    button#logevent.btn.btn-default.left-space-1rem
+          #log-text Log
+          #log-linecount
+
+  .col-sm-12.js-iframe
+    .col-sm-6
+      h3 HTML CSS Result
+    .col-sm-5.js-title-console
+      h3.js-title
+    .col-sm-12
+      #run-result
+        iframe#run-iframe
+        #run-logresult
+
+
+append end-script
+  script(src='/ace/src-noconflict/ace.js')
+  script(src='/js/lib/md5.js')
+  script(src='/js/resizable.js')
+  script.
+
+    var runId = '';
+    var runTimestamp = 0;
+    var runErrorCount = 0;
+    var runFunctionCount = 0;
+    var runData = [];
+    var runlogTimeout;
+    var runlogSending = false;
+    var logCount = 0;
+    var testlogSending = false;
+
+    async function sendRunlog() {
+        if (runlogSending)
+          return;
+        runlogSending = true;
+        try {
+          var workId = $('.page-header').data('work-id');
+          var exerciseId = $('.page-header').data('exercise-id');
+          var res = await fetch('/runlog', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify({run:runId, work: workId, exercise: exerciseId, logs: runData}), 
+            credentials: 'include',
+            headers: new Headers({
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+          });
+          var response = res.json();
+          //- console.log('Success', response);
+          runData = [];
+        }
+        catch(e) {
+          //- console.log('Error', e);
+        }
+        runlogSending = false;
+    }
+
+    async function sendTestlog(testData) {
+        if (testlogSending)
+          return;
+        testlogSending = true;
+        try {
+          var workId = $('.page-header').data('work-id');
+          var exerciseId = $('.page-header').data('exercise-id');
+          var res = await fetch('/testlog', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify({work: workId, exercise: exerciseId, logs: testData}), 
+            credentials: 'include',
+            headers: new Headers({
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+          });
+          var response = res.json();
+          //- console.log('Success', response);
+        }
+        catch(e) {
+          //- console.log('Error', e);
+        }
+        testlogSending = false;
+    }
+
+    window.addEventListener('message', async function processRunLog(e) {
+      var log = e.data;
+      //- console.log('message',log);
+      //- return;
+
+      if (log[1] == 'testlog') {
+        await sendTestlog(log);
+        return;
+      }
+
+      log.forEach(function(m) {
+        if (m[1] == 'domError') {
+          runErrorCount++;
+          addLogMessage([m[0], 'error', [m[2][0]]]);//,'at','line', m[2][2]]])
+        }
+        if (m[1] == 'runtimeError') {
+          runErrorCount++;
+          addLogMessage([m[0], 'error', [m[3], ' at ', m[2]]])
+        }
+        if (m[1] == 'log') {
+          runFunctionCount++;
+          addLogMessage(m)
+        }
+      });
+
+      if (log[0][1] == 'runid') {
+        if (runId && runData.length) {
+          // send the remaining log
+          await sendRunlog();
+        }
+        runId = log[0][2];
+        runTimestamp = log[0][0];
+
+        log.shift();
+        if (log.length == 0) {
+          runData = [];
+          return;
+        }
+      }
+
+      if (runFunctionCount && !runErrorCount)
+        $('#run-test').removeClass('disabled');
+
+      // send run log data
+      //- runData.push(e.data);
+      runData = runData.concat(log);
+      //- console.log('runData', runData);
+      if (runData && (runData.length > 5 || log[0][0] - runData[0][0] > 3000)) {
+        clearTimeout(runlogTimeout);
+        runlogTimeout = null;
+        //- console.log('send now');
+        await sendRunlog();
+      }
+      else 
+      if (runId && !runlogTimeout) {
+        //- console.log('schedule');
+        runlogTimeout = setTimeout(async function() {
+          // send now
+          await sendRunlog();
+          runlogTimeout = null;
+        }, 1000);
+      }
+      else {}
+
+    });
+
+    function addLogMessage(message) {
+      ++logCount;
+      $('#log-linecount').text(logCount);
+      $('#run-logresult').append(`<div title="${message[0]}" class="log-line line-${message[1]}">${message[2].join(' ')}</div>`);
+    }
+    
+    function clearLogMessage() {
+      logCount = 0;
+      $('#log-linecount').text('');
+      $('#run-logresult').html('');
+    }
+
+
+    var workData = [];
+    var worklogTimeout;
+    var worklogSending = false;
+
+    async function sendWorklog() {
+        var exerciseId = $('.page-header').data('exercise-id');
+        var workId = $('.page-header').data('work-id');
+        var studentId = $('.page-header').data('student');
+        if (worklogSending || !workId)
+          return;
+        worklogSending = true;
+        try {
+          var worklog = {
+            exercise: exerciseId,
+            work: workId,
+            student: studentId,
+            //- html: htmlEditor.getValue(),
+            //- css: cssEditor.getValue(),
+            //- js: jsEditor.getValue(),
+            logs: workData
+          };
+          var res = await fetch('/worklog', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(worklog), 
+            credentials: 'include',
+            headers: new Headers({
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+          });
+          var response = res.json();
+          //- console.log('Success', response);
+          workData = [];
+        }
+        catch(e) {
+          //- console.log('Error', e);
+        }
+        worklogSending = false;
+    }
+    
+   
+    $('#editor-container').resizable({handles:'s', minHeight:800});
+    $('#run-result').resizable({handles:'s', minHeight:300});
+
+    //$('#work-editor').resizable({handles:'s', minHeight:300});
+    $('#html-editor-tab').resizable({handles:'e', minWidth:25});
+    $('#css-editor-tab').resizable({handles:'e', minWidth:25});
+    $('#js-editor-tab').resizable({handles:'xoxo', minWidth:25});
+
+    var htmlEditor = ace.edit('html-editor');
+    htmlEditor.setTheme('ace/theme/monokai');
+    htmlEditor.session.setMode('ace/mode/html');
+    
+    var cssEditor = ace.edit('css-editor');
+    cssEditor.setTheme('ace/theme/monokai');
+    cssEditor.session.setMode('ace/mode/css');
+
+    var jsEditor = ace.edit('js-editor');
+    jsEditor.setTheme('ace/theme/monokai');
+    jsEditor.session.setMode('ace/mode/javascript');
+    //- jsEditor.session.on('change', console.log);
+    jsEditor.on('paste', async function processWorkLog(e) {
+      var pasted = e.text;
+
+      if (pasted.length < 5)
+        return;
+
+      var workLog = {
+        type: 'paste',
+        text: pasted,
+        timestamp: Date.now(),
+      }
+      // send run log data
+      //- runData.push(e.data);
+      workData.push(workLog);
+      if (workData && (workData.length > 5 || workLog.timestamp - workData[0].timestamp > 2000)) {
+        clearTimeout(worklogTimeout);
+        worklogTimeout = null;
+        //- console.log('send now');
+        sendWorklog();
+      }
+      else 
+      if (!worklogTimeout) {
+        //- console.log('schedule');
+        worklogTimeout = setTimeout(function() {
+          // send now
+          sendWorklog();
+          worklogTimeout = null;
+        }, 2000);
+      }
+      else {}
+
+    });
+
+    var editorState = {
+      htmlLast: 0,
+      cssLast: 0,
+      jsLast: 0,
+      getLastDelta: function() {
+        var htmlUM = htmlEditor.session.getUndoManager();
+        var cssUM = cssEditor.session.getUndoManager();
+        var jsUM = jsEditor.session.getUndoManager();
+        var thisHtmlLast = htmlUM.$rev;
+        var thisCssLast = cssUM.$rev;
+        var thisJsLast = jsUM.$rev;
+        return [thisHtmlLast, thisCssLast, thisJsLast];
+      },
+      isDirty: function() {
+        var curLastDelta = this.getLastDelta();
+        return this.htmlLast != curLastDelta[0] || this.cssLast != curLastDelta[1] || this.jsLast != curLastDelta[2];
+      },
+      save: function() {
+        var curLastDelta = this.getLastDelta();
+        this.htmlLast = curLastDelta[0];
+        this.cssLast = curLastDelta[1];
+        this.jsLast = curLastDelta[2];
+      }
+    }
+
+    window.addEventListener('beforeunload', function(e) {
+      if (editorState.isDirty()) {
+        e.returnValue = 'You have unsaved changes.';
+      }
+    });
+
+    $('#work-editor-container').resize(function(e) {
+      htmlEditor.resize();
+      cssEditor.resize();
+      jsEditor.resize();
+    })
+    $('#html-editor-tab, #css-editor-tab').resize(
+        {parent: '#work-editor', peers: ['#html-editor-tab', '#css-editor-tab', '#js-editor-tab'], minsize: 25, dir: 'horizontal'}, resizeTabs);
+
+    $('#run').click(function() {
+      runErrorCount = 0;
+      runFunctionCount = 0;
+
+      $('#run-test').addClass('disabled');
+      $('#run-logresult').hide();
+
+      setTimeout(function() {
+        if (!runErrorCount)
+          $('#run-test').removeClass('disabled');
+      }, 3000);
+      
+      clearLogMessage();
+      document.getElementById('run-iframe').src = '/run/work/'+$('.page-header').data('work-id')+'?time='+Date.now();
+    })
+
+    $('#run-window').click(function() {
+      window.open('/run/work/'+$('.page-header').data('work-id')+'?raw=yes&time='+Date.now(), '_runwindow');
+    })
+
+    $('#run-test').click(function() {
+      if (this.getAttribute('class').includes('disabled') || !runTimestamp)
+        return;
+      clearLogMessage();
+      $('#run-logresult').hide();
+      document.getElementById('run-iframe').src = '/run/test/'+$('.page-header').data('work-id')+'?time='+Date.now();
+    })
+
+    $('#logevent').click(function() {
+      $('#run-logresult').toggle();
+      if($('#run-logresult').css('display') === "block"){
+         $('.js-iframe').find('.js-title').text('Console')
+      } else {
+        $('.js-iframe').find('.js-title').text('')
+      }
+     
+      
+    })
+
+    $('#save').click(function() {
+      if (!editorState.isDirty())
+        return;
+
+      var exerciseId = $('.page-header').data('exercise-id');
+      var exerciseDeadline = $('.page-header').data('exercise-deadline');
+      var workId = $('.page-header').data('work-id');
+      var studentId = $('.page-header').data('student');
+      $('.page-header').data('savecount', $('.page-header').data('savecount') + 1);
+      
+      var work = {
+        student: studentId,
+        exercise: exerciseId,
+        deadline: exerciseDeadline,
+        html: htmlEditor.getValue(),
+        css: cssEditor.getValue(),
+        js: jsEditor.getValue(),
+        savecount: $('.page-header').data('savecount')
+      };
+      work.hash = md5(work.html+work.css+work.js);
+
+      runTimestamp = 0;
+      $('#run-test').addClass('disabled');
+
+      editorState.save();
+      if (!workId) {
+        fetch('/work', {
+          method: 'POST', // or 'PUT'
+          body: JSON.stringify(work), 
+          credentials: 'include',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+          })
+        }).then(res => res.json())
+        .then(response => {
+          //- console.log('Success:', response);
+          $('.page-header').data('work-id', response.workId);
+        })
+        .catch(error => console.error('Error:', error))
+      }
+      else {
+        fetch('/work/'+workId, {
+          method: 'PUT', // or 'PUT'
+          body: JSON.stringify(work),
+          credentials: 'include',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+          })
+        }).then(res => res.json())
+        //- .then(response => console.log('Success:', response))
+        .catch(error => console.error('Error:', error));
+      }
+    });

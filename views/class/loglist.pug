@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+  .container
+    .page-header
+      h3 Class Logs
+      
+    ol
+      each c in classes
+        li
+          a(href='/classlog/' + c.id) #{c.classId}

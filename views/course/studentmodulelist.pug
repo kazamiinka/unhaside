@@ -1,0 +1,134 @@
+extends ../layout
+
+block content
+  .container
+    .page-header
+      nav(aria-label="breadcrumb")
+        ol.breadcrumb
+          li.breadcrumb-item(aria-current="page")
+            a(href="/course")
+              | All Courses
+          li.breadcrumb-item.active(aria-current="page")
+            | #{ex.title}
+  .container
+    .row
+      .card
+        .col-md-12
+          .col-md-10
+            h3 All Modules #{ex.title}
+          .col-md-2(style='padding:20px')
+            a(href="/course/preview/" + ex.id + "/moduleList")
+              button.btn.btn-outline-info(type='button') Go To Module List
+      //- each c in modules
+      //-   .col-md-4
+      //-     .card.mb-4.box-shadow(style='height: 100% !important;')
+      //-       img.card-img-top(src='https://images.pexels.com/photos/247791/pexels-photo-247791.png?auto=compress&cs=tinysrgb&dpr=2&h=200&w=300', alt='Card image cap')
+      //-       .card-body
+      //-         p.card-text
+      //-           | #{c.titleModule}
+      //-         .d-flex.justify-content-between.align-items-center
+      //-           .btn-group
+      //-             a.btn.btn-xs.btn-outline-secondary(type='button',href='/course/preview/' + c.courseId + '/' + c.id) Read More
+      //-           //- a.btn.btn-link(href='/course/delete/' + c.id)  Delete
+  
+  .container
+    .page-header
+      h3 All Quis
+
+    .card
+          #headingFour.card-header
+            h5.mb-0.col-md-9
+              button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFive' aria-expanded='false' aria-controls='collapseThree')
+                | Quis 
+                i.fa.fa-angle-down
+            if(user.role == 'teacher' || user.role == 'admin')
+              h5.mb-0.col-md-3
+                a.nounderline(href='/course/'+ ex._id +'/quis/add')
+                  button.btn.btn-link(type='button')
+                      i.fa.fa-plus-circle
+                      | Add New Quis
+
+          #collapseFive.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
+              .card-body
+                if (user.role == 'teacher' || user.role == 'admin')
+                ul.list-group
+                  if(quis == 0)
+                    p Data not exist
+                  each c in quisest
+                    li.list-group-item
+                      // i.fa.fa-circle
+                      a.nounderline(href='/quis/student/'+ ex._id +'/' + c._id) #{c.title} 
+                      if (user.role == 'teacher' || user.role == 'admin' || user.role == 'assistant')
+                        span.pull-right        
+                          a(href='#',style="margin-right:5px;", onclick='deleteIdQuis(\'' + c._id + '\')') 
+                            i.fa.fa-trash(style='color: red') 
+
+  .container
+    .page-header
+      h3 All Forum Discussion 
+
+    .card
+          #headingFour.card-header
+            h5.mb-0.col-md-9
+              button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFive2' aria-expanded='false' aria-controls='collapseThree')
+                | Forum Discussion 
+                i.fa.fa-angle-down
+            //- if(user.role == 'teacher' || user.role == 'admin')
+            h5.mb-0.col-md-3
+              a.nounderline(href='/course/'+ ex._id +'/forum/add')
+                button.btn.btn-link(type='button')
+                    i.fa.fa-plus-circle
+                    | Add New 
+
+          #collapseFive2.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
+              .card-body
+                if (user.role == 'teacher' || user.role == 'admin')
+                ul.list-group
+                  if(thisForum == 0)
+                    p Data not exist
+                  each c in thisForum
+                    li.list-group-item
+                      // i.fa.fa-circle
+                      a.nounderline(href='/course/'+ ex._id +'/forum/' + c._id) #{c.title} 
+                      if (user.role == 'teacher' || user.role == 'admin' || user.role == 'assistant')
+                        span.pull-right        
+                          a(href='#',style="margin-right:5px;", onclick='deleteIdQuis(\'' + c._id + '\')') 
+                            i.fa.fa-trash(style='color: red') 
+
+  .container
+    .page-header
+      h3 All Exercise 
+
+    .card
+          #headingFour.card-header
+            //- - var isAssign = false
+            //- each ce in classExercise.students
+            //-   p=ce
+            //-   if(ce == user.id)
+            //-     - isAssign = true
+            //- p=isAssign
+            h5.mb-0.col-md-9
+              button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFive3' aria-expanded='false' aria-controls='collapseThree')
+                | Exercise 
+                i.fa.fa-angle-down
+            //- if(user.role == 'teacher' || user.role == 'admin')
+            h5.mb-0.col-md-3
+              a.nounderline(href='/course/'+ ex._id +'/forum/add')
+                //- button.btn.btn-link(type='button')
+                //-     i.fa.fa-plus-circle
+                //-     | Add New 
+
+          #collapseFive3.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
+              .card-body
+                //- if (user.role == 'teacher' || user.role == 'admin')
+                ul.list-group
+                  if(exercise == 0)
+                    p Data not exist
+                  each exer in exercise
+                    li.list-group-item
+                      // i.fa.fa-circle
+                      a(href='/work/exercise/'+exer._id)= exer.title
+                      if (user.role == 'teacher' || user.role == 'admin' || user.role == 'assistant')
+                        span.pull-right        
+                          a(href='#',style="margin-right:5px;", onclick='deleteIdQuis(\'' + c._id + '\')') 
+                            i.fa.fa-trash(style='color: red') 

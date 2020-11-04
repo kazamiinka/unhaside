@@ -1,0 +1,116 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 New Exercise
+
+  .editor-container
+    .form-group
+      label.col-sm-3.control-label(for='title') Exercise Name
+      .col-sm-7
+        input.form-control(type='text', name='title', id='title', placeholder='Name')
+
+    #exercise-editor.editor
+      #instruction-editor-tab.tab.editor-2
+        .editor-header Instruction
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span Instruction
+        #instruction-editor.spell-editor
+
+      #testcode-editor-tab.tab.editor-2
+        .editor-header Test Code Template
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span Test Code Template
+        #testcode-editor.spell-editor
+
+  .editor-container
+    #init-editor.editor
+      #html-editor-tab.tab.editor-3
+        .editor-header HTML
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span HTML
+        #html-editor.spell-editor
+
+      #css-editor-tab.tab.editor-3
+        .editor-header CSS
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span CSS
+        #css-editor.spell-editor
+
+      #js-editor-tab.tab.editor-3
+        .editor-header JavaScript
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span JavaScript
+        #js-editor.spell-editor 
+
+  #command
+    button#save.btn.btn-primary Save
+  #run-result
+
+append end-script
+  script(src='/ace/src-noconflict/ace.js')
+  script(src='/js/resizable.js')
+  script.
+    $('#instruction-editor-tab').resizable({handles:'e', minWidth:25});
+    $('#testcode-editor-tab').resizable({handles:'xoxo', minWidth:25});
+    $('#html-editor-tab').resizable({handles:'e', minWidth:25});
+    $('#css-editor-tab').resizable({handles:'e', minWidth:25});
+    $('#js-editor-tab').resizable({handles:'xoxo', minWidth:25});
+
+    var htmlEditor = ace.edit('html-editor');
+    htmlEditor.setTheme('ace/theme/monokai');
+    htmlEditor.session.setMode('ace/mode/html');
+    
+    var cssEditor = ace.edit('css-editor');
+    cssEditor.setTheme('ace/theme/monokai');
+    cssEditor.session.setMode('ace/mode/css');
+
+    var jsEditor = ace.edit('js-editor');
+    jsEditor.setTheme('ace/theme/monokai');
+    jsEditor.session.setMode('ace/mode/javascript');
+
+    var testEditor = ace.edit('testcode-editor');
+    testEditor.setTheme('ace/theme/monokai');
+    testEditor.session.setMode('ace/mode/javascript');
+
+    var instEditor = ace.edit('instruction-editor');
+    instEditor.setTheme('ace/theme/monokai');
+    //- testEditor.session.setMode('ace/mode/javascript');
+
+    $('#instruction-editor-tab').resize(
+        {parent: '#exercise-editor', peers: ['#instruction-editor-tab', '#testcode-editor-tab'], minsize: 25, dir: 'horizontal'}, resizeTabs);
+    $('#html-editor-tab, #css-editor-tab').resize(
+        {parent: '#init-editor', peers: ['#html-editor-tab', '#css-editor-tab', '#js-editor-tab'], minsize: 25, dir: 'horizontal'}, resizeTabs);
+
+    $('#save').click(function() {
+      var exercise = {
+        title: $('#title').val(),
+        instruction: instEditor.getValue(),
+        testcode: testEditor.getValue(),
+        html: htmlEditor.getValue(),
+        css: cssEditor.getValue(),
+        js: jsEditor.getValue()
+      };
+
+      fetch('/exercise', {
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify(exercise),
+        credentials: 'include',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+        })
+      }).then(res => res.json())
+      .catch(error => console.error('Error:', error))
+      .then(response => console.log('Success:', response)); 
+    });

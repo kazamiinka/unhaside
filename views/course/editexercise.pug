@@ -1,0 +1,203 @@
+//- extends ../layout
+
+//- block content
+//-   .container
+//-     .page-header(data-id='')
+//-       h3 #{title}'s Module
+//-       h5 Created by #{user.email}
+
+//-       | #{thisExercise}
+
+extends ../layout
+
+block content
+  .container
+    .page-header(data-id=ex.id)
+      nav(aria-label="breadcrumb")
+        ol.breadcrumb
+          li.breadcrumb-item(aria-current="page")
+            a(href="/course")
+              | All Courses
+          li.breadcrumb-item(aria-current="page")
+            a(href="/course/"+courseId)
+              | #{thisCourse.title}'s Course
+          li.breadcrumb-item(aria-current="page")
+            a(href="/course/"+courseId)
+              | Exercise
+          li.breadcrumb-item.active(aria-current="page")
+            | #{ex.title}
+      h3 Edit Exercise #{ex.title}
+
+    .editor-container
+       .form-group
+        label.col-sm-3.control-label(for='title') Exercise Name
+        .col-sm-7
+          input.form-control(type='text', name='title', id='title', placeholder='Name', value=ex.title)
+
+    .form-group
+      label.col-sm-3.control-label(for='title') Parent
+      .col-sm-7
+        select#parentId.form-control
+          each c in thisModules
+            if(JSON.stringify(c._id)==JSON.stringify(ex.parentId))
+              option(value=c._id, selected='selected') #{c.titleModule}
+            else
+              option(value=c._id) #{c.titleModule}  
+                option(value=c._id) #{c.titleModule}  
+              option(value=c._id) #{c.titleModule}  
+                option(value=c._id) #{c.titleModule}  
+              option(value=c._id) #{c.titleModule}  
+                option(value=c._id) #{c.titleModule}  
+              option(value=c._id) #{c.titleModule}  
+                option(value=c._id) #{c.titleModule}  
+              option(value=c._id) #{c.titleModule}  
+                option(value=c._id) #{c.titleModule}  
+              option(value=c._id) #{c.titleModule}  
+          //- option(value='kucing') test gila
+        //- input.form-control(type='text', name='title', id='title', placeholder='Name', value=ex.title)
+
+      .form-group
+        label.col-sm-3.control-label(for='enablerunraw') Enable run raw code
+        .col-sm-1
+          input.form-control(type='checkbox', name='enablerunraw', id='enablerunraw', checked=ex.enablerunraw, style="margin-bottom:10px; margin-top:10px; height:20px")
+
+      #exercise-editor.editor
+        #instruction-editor-tab.tab.editor-2(style="background-color:#D9D9D9;")
+          .editor-header Instruction
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span Instruction
+          #instruction-editor.spell-editor= ex.instruction
+
+        #testcode-editor-tab.tab.editor-2(style="background-color:#D9D9D9;")
+          .editor-header Test Code Template
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span Test Code Template
+          #testcode-editor.spell-editor= ex.testcode
+
+    .editor-container
+      #init-editor.editor
+        #html-editor-tab.tab.editor-3(style="background-color:#D9D9D9;")
+          .editor-header HTML
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span HTML
+          #html-editor.spell-editor= ex.html
+
+        #css-editor-tab.tab.editor-3(style="background-color:#D9D9D9;")
+          .editor-header CSS
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span CSS
+          #css-editor.spell-editor= ex.css
+
+        #js-editor-tab.tab.editor-3(style="background-color:#D9D9D9;")
+          .editor-header JavaScript
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span JavaScript
+          #js-editor.spell-editor= ex.js
+
+    #command
+      .form-group
+        button#bt-update.col-sm-3.btn.btn-primary
+          i.fa.fa-save
+          | Update
+
+      //- .form-group
+      //-   button#bt-new.col-sm-3.btn.btn-primary.left-space-1rem
+      //-     i.fa.fa-plus
+      //-     | Save New
+    #run-result
+
+  append end-script
+    script(src='/ace/src-noconflict/ace.js')
+    script(src='/js/resizable.js')
+    script.
+      $('#instruction-editor-tab').resizable({handles:'e', minWidth:25});
+      $('#testcode-editor-tab').resizable({handles:'xoxo', minWidth:25});
+      $('#css-editor-tab').resizable({handles:'e', minWidth:25});
+      $('#html-editor-tab').resizable({handles:'e', minWidth:25});
+      $('#css-editor-tab').resizable({handles:'e', minWidth:25});
+      $('#js-editor-tab').resizable({handles:'xoxo', minWidth:25});
+
+      var htmlEditor = ace.edit('html-editor');
+      htmlEditor.setTheme('ace/theme/Agolalight');
+      htmlEditor.session.setMode('ace/mode/html');
+      
+      var cssEditor = ace.edit('css-editor');
+      cssEditor.setTheme('ace/theme/Agolalight');
+      cssEditor.session.setMode('ace/mode/css');
+
+      var jsEditor = ace.edit('js-editor');
+      jsEditor.setTheme('ace/theme/Agolalight');
+      jsEditor.session.setMode('ace/mode/javascript');
+
+      var testEditor = ace.edit('testcode-editor');
+      testEditor.setTheme('ace/theme/Agolalight');
+      testEditor.session.setMode('ace/mode/javascript');
+
+      var instEditor = ace.edit('instruction-editor');
+      instEditor.setTheme('ace/theme/Agolalight');
+      //- testEditor.session.setMode('ace/mode/javascript');
+
+      $('#instruction-editor-tab').resize(
+          {parent: '#exercise-editor', peers: ['#instruction-editor-tab', '#testcode-editor-tab'], minsize: 25, dir: 'horizontal'}, resizeTabs);
+      $('#html-editor-tab, #css-editor-tab, #js-editor-tab').resize(
+          {parent: '#init-editor', peers: ['#html-editor-tab', '#css-editor-tab', '#js-editor-tab'], minsize: 25, dir: 'horizontal'}, resizeTabs);
+
+      //- $('#bt-new').click(function() {
+      //-   var exercise = {
+      //-     title: 'Copy of '+$('#title').val(),
+      //-     enablerunraw: !!$('#enablerunraw:checked').val(),
+      //-     instruction: instEditor.getValue(),
+      //-     testcode: testEditor.getValue(),
+      //-     html: htmlEditor.getValue(),
+      //-     css: cssEditor.getValue(),
+      //-     js: jsEditor.getValue()
+      //-   };
+
+      //-   fetch('/exercise', {
+      //-     method: 'POST', // or 'PUT'
+      //-     body: JSON.stringify(exercise),
+      //-     credentials: 'include',
+      //-     headers: new Headers({
+      //-       'Content-Type': 'application/json',
+      //-       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+      //-     })
+      //-   }).then(res => res.json())
+      //-   .catch(error => console.error('Error:', error))
+      //-   .then(response => console.log('Success:', response)); 
+      //- });
+
+      $('#bt-update').click(function() {
+        var exercise = {
+          title: $('#title').val(),
+          parentId: $('#parentId').val(),
+          enablerunraw: !!$('#enablerunraw:checked').val(),
+          instruction: instEditor.getValue(),
+          testcode: testEditor.getValue(),
+          html: htmlEditor.getValue(),
+          css: cssEditor.getValue(),
+          js: jsEditor.getValue()
+        };
+        
+        console.log(exercise);
+        fetch('/course/exercise/#{courseId}/#{exerciseId}', {
+          method: 'PUT',
+          body: JSON.stringify(exercise), 
+          credentials: 'include',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+          })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => { console.log('Success:', response);  window.location.href = '/course/#{courseId}';}); 
+      });

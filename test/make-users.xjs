@@ -1,0 +1,106 @@
+const { expect } = require('chai');
+const sinon = require('sinon');
+
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGODB_URI);
+mongoose.connection.on('error', (err) => {
+  console.error(err);
+  console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
+  process.exit();
+});
+
+const User = require('../models/User');
+
+describe('Make user', () => {
+  it('should create a new assistant', (done) => {
+    const user = new User({ email: 'assistant1@gmail.com', password: 'root', role: 'assistant' });
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new assistant', (done) => {
+    const user = new User({ email: 'assistant2@gmail.com', password: 'root', role: 'assistant' });
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new assistant', (done) => {
+    const user = new User({ email: 'assistant3@gmail.com', password: 'root', role: 'assistant' });
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new student', (done) => {
+    const user = new User({ email: 'student1@gmail.com', password: 'root'});
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new student', (done) => {
+    const user = new User({ email: 'student2@gmail.com', password: 'root'});
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new student', (done) => {
+    const user = new User({ email: 'student3@gmail.com', password: 'root'});
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new student', (done) => {
+    const user = new User({ email: 'student4@gmail.com', password: 'root'});
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new student', (done) => {
+    const user = new User({ email: 'student5@gmail.com', password: 'root'});
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new student', (done) => {
+    const user = new User({ email: 'student6@gmail.com', password: 'root'});
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+  it('should create a new student', (done) => {
+    const user = new User({ email: 'student7@gmail.com', password: 'root'});
+
+    user.save((err) => {
+      expect(err).to.be.null;
+      done();
+    });
+  });
+
+});

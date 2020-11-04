@@ -1,0 +1,140 @@
+extends ../layout
+
+block content
+    .container
+        if isAlreadyAnswer
+            p Sudah Quis
+        else
+            form.form-horizontal.form-quis-student
+                        .modal-dialog.modal-dialog-centered.modal-add-course(role='document', style="width:100%")
+                            .modal-content
+                                .modal-header
+                                    col-md-12
+                                        p Jawablah Pertanyaan ini. (Note: Jawaban bisa lebih dari satu. Diharapkan menjawab dengan teliti) 
+                                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                        span(aria-hidden='true') &times;
+                                    .form-group.new-question
+                                            .col-sm-12
+                                                h5#exampleModalLongTitle.modal-title Quis #{ex.title }
+                                    .modal-body
+                                        .form-group.new-questionAppend
+                                        - var num = 1
+                                            each question in ex.question 
+                                                .col-sm-10.newQuestionTitle
+                                                    .addNewQuestion
+                                                        - var text=question.ask
+                                                        p!=text
+                                                        //- label.question-quis(for='staticEmail')|#{num++}. #{ question.ask} #{correctAnswer}
+                                                        br
+                                                        each answer in question.optionAnswer
+                                                            .col-sm-5.form-group.row.quis-option-answer
+                                                                label.col-sm-1(for='staticEmail') #{answer.option}
+                                                            .col-sm-7   
+                                                                input#questionAnswer.form-control(type='checkbox', name='answer', value=answer.option, data-id=answer.id_answer, data-score=question.score)
+                                                                br
+                                                        .col-md-9.score-question
+                                                            label.col-sm-1(for='staticEmail')='Bobot: '
+                                                            label.col-sm-9=question.score
+                                                            br
+                                                        | &apos;
+                                                .col-md-12(style="padding-top:50px")
+                                .modal-footer
+                                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                                        button#bt-new-quis-student.btn.btn-primary Selesai
+
+
+    #popUpScore.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title Sukses
+                .modal-body
+                    | Selamat, anda menyelesaikan quis. score anda : 
+                    p.scoreTotal
+                .modal-footer
+                    //- button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                    button.btn.btn-primary.btn-save-quis(type='button') Oke
+
+
+append end-script
+  script.
+    
+    $('.btn-save-quis').on("click",function(){
+        history.go(-1)
+    })
+
+    $('#bt-new-quis-student').click(function() {
+        var optionAnswer = $('.newQuestionTitle')
+        var jsonDataAnswer = []
+        var totalScore = 0
+        var totalAnswerLength = 0
+        optionAnswer.each(function(){
+            var _this = $(this)
+            var mapAnswer = []
+            var scoreFinal = 0;
+            var answerLength = _this.find('input[name=answer]')
+            var scoreLength = 0
+            answerLength.each(function(){
+                var dataId = $(this).data('id')
+                if(dataId.startsWith('1')){
+                    scoreLength = scoreLength + 1
+                }
+            })
+            var $boxes = _this.find('input[name=answer]:checked');
+            $boxes.each(function(){
+                mapAnswer.push($(this).val())
+                var idAnswer = $(this).data('id')
+                var scorest = $(this).data('score')
+                var score = scorest / scoreLength
+                if(idAnswer.startsWith('1')){
+                    totalAnswerLength = totalAnswerLength+1
+                    scoreFinal = scoreFinal + score
+                }
+            })
+
+            totalScore = scoreFinal + totalScore
+            if($boxes.length > scoreLength){
+                totalScore = 0
+            }
+            
+            
+            var jsonAnswer = {
+                    ask : _this.find('.question-quis').text(),
+                    answer : mapAnswer,
+                    score : scoreFinal
+                }
+            jsonDataAnswer.push(jsonAnswer)
+
+            $('#popUpScore').on('show.bs.modal', function(event) {
+                $(".scoreTotal").text(totalScore);
+            });
+            //- $('#popUpScore').text(totalScore)
+        })
+    
+        var newQuisStudent = {
+            courseId : '#{courseId}',
+            quisId: '#{ex._id}',
+            studentId : '#{user.id}',
+            questionAnswer: jsonDataAnswer,
+            totalScore: totalScore
+        }
+        //- console.log(correctAnswer)
+       
+        console.log(newQuisStudent)
+        fetch('/quis/student', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newQuisStudent),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {console.log('Success:', response); $('#popUpScore').modal('show'); ;}); 
+    return false;
+    }) 
+
+    
+
+

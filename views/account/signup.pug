@@ -1,0 +1,67 @@
+doctype html
+head
+  title Login - UbiconLabs
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1')
+  // ===============================================================================================
+  link(rel='shortcut icon', href='https://unhas.ac.id/assets/img/favicon.png')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/vendor/bootstrap/css/bootstrap.min.css')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/fonts/font-awesome-4.7.0/css/font-awesome.min.css')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/fonts/Linearicons-Free-v1.0.0/icon-font.min.css')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/vendor/animate/animate.css')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/vendor/css-hamburgers/hamburgers.min.css')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/vendor/animsition/css/animsition.min.css')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/vendor/select2/select2.min.css')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/vendor/daterangepicker/daterangepicker.css')
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='login_style/css/util.css')
+  link(rel='stylesheet' type='text/css' href='login_style/css/main.css')
+  // ===============================================================================================
+.limiter
+  .container-login100
+    .wrap-login100
+      .login100-form-title(style='background-image: url(login_style/images/bg-01.jpg);')
+        span.login100-form-title-1
+        img(style='width:10%' src='https://upload.wikimedia.org/wikipedia/id/9/95/Logo_UH.png')
+        span.login100-form-title-1
+          | Sign Up
+      form#signup-form.login100-form.validate-form(method='POST')
+        input(type='hidden' name='_csrf' value='_csrf')
+        .wrap-input100.validate-input.m-b-26(data-validate='Username is required')
+          span.label-input100 Username
+          input#email.input100(type='email' name='email' placeholder='Email@unhas.ac.id' autofocus='' required='')
+          span.focus-input100
+        .wrap-input100.validate-input.m-b-18(data-validate='Password is required')
+          span.label-input100 Password
+          input#password.input100(type='password' name='password' placeholder='Password' required='')
+          span.focus-input100
+        .wrap-input100.validate-input.m-b-18(data-validate='Password is required')
+          span.label-input100 Confirm Password
+          input#confirmPassword.input100(type='password' name='confirmPassword' placeholder='Confirm Password' required='')
+          span.focus-input100
+        .container-login100-form-btn
+          input.login100-form-btn(type='submit')
+// ===============================================================================================
+script(src='login_style/vendor/jquery/jquery-3.2.1.min.js')
+// ===============================================================================================
+script(src='login_style/vendor/animsition/js/animsition.min.js')
+// ===============================================================================================
+script(src='login_style/vendor/bootstrap/js/popper.js')
+script(src='login_style/vendor/bootstrap/js/bootstrap.min.js')
+// ===============================================================================================
+script(src='login_style/vendor/select2/select2.min.js')
+// ===============================================================================================
+script(src='login_style/vendor/daterangepicker/moment.min.js')
+script(src='login_style/vendor/daterangepicker/daterangepicker.js')
+// ===============================================================================================
+script(src='login_style/vendor/countdowntime/countdowntime.js')
+// ===============================================================================================
+script(src='login_style/js/main.js')

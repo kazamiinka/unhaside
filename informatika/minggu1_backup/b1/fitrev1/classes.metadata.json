@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"fitrev1.classes"},{"v":1,"unique":true,"key":{"classId":1},"name":"classId_1","ns":"fitrev1.classes","background":true}]}

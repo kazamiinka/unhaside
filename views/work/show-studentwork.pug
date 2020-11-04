@@ -1,0 +1,198 @@
+extends ../layout
+
+block content
+  #editor-container
+    #work-editor-header.page-header(data-work-id=work._id, data-student=work.student, data-exercise-id=exercise._id,data-savecount=work.savecount).wide-container
+        h3 Exercise: #{exercise.title} - Student: #{work.student.email}
+        div!= exercise.instruction
+
+    #work-editor-container.editor-resizable.wide-container
+      #work-editor.editor
+        #html-editor-tab.tab.editor-3
+          .editor-header HTML
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span HTML
+          #html-editor.spell-editor= work.html
+
+        #css-editor-tab.tab.editor-3
+          .editor-header CSS
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span CSS
+          #css-editor.spell-editor= work.css
+
+        #js-editor-tab.tab.editor-3
+          .editor-header JavaScript
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span JavaScript
+          #js-editor.spell-editor= work.js
+
+      #command.editor-command
+        button#save.btn.btn-primary(role='button', disabled)
+          i.fa.fa-save
+          | Save
+        button#run.btn.btn-primary.left-space-1rem
+          i.fa.fa-play
+          | Run
+        button#run-window.btn.btn-primary.left-space-1rem
+          i.fa.fa-play
+          | Run in New Window
+        if exercise.testcode
+          button#run-test.btn.btn-primary.left-space-1rem
+            i.fa.fa-puzzle-piece
+            | Test
+
+  #run-result
+    iframe#run-iframe
+
+append end-script
+  script(src='/ace/src-noconflict/ace.js')
+  script(src='/js/lib/md5.js')
+  script(src='/js/resizable.js')
+  script.
+
+    var runId = '';
+    var runTimestamp = 0;
+    var runData = [];
+    var runlogTimeout;
+    var runlogSending = false;
+
+    window.addEventListener('message', async function processRunLog(e) {
+      var log = e.data;
+      console.log('message',log);
+      return;
+    });
+
+    
+    var workData = [];
+    var worklogTimeout;
+    var worklogSending = false;
+   
+    $('#editor-container').resizable({handles:'s', minHeight:800});
+    $('#run-result').resizable({handles:'s', minHeight:300});
+
+    //$('#work-editor').resizable({handles:'s', minHeight:300});
+    $('#html-editor-tab').resizable({handles:'e', minWidth:25});
+    $('#css-editor-tab').resizable({handles:'e', minWidth:25});
+    $('#js-editor-tab').resizable({handles:'xoxo', minWidth:25});
+
+    var htmlEditor = ace.edit('html-editor');
+    htmlEditor.setTheme('ace/theme/monokai');
+    htmlEditor.session.setMode('ace/mode/html');
+    
+    var cssEditor = ace.edit('css-editor');
+    cssEditor.setTheme('ace/theme/monokai');
+    cssEditor.session.setMode('ace/mode/css');
+
+    var jsEditor = ace.edit('js-editor');
+    jsEditor.setTheme('ace/theme/monokai');
+    jsEditor.session.setMode('ace/mode/javascript');
+    //- jsEditor.session.on('change', console.log);
+
+    var editorState = {
+      htmlLast: 0,
+      cssLast: 0,
+      jsLast: 0,
+      getLastDelta: function() {
+        var htmlUM = htmlEditor.session.getUndoManager();
+        var cssUM = cssEditor.session.getUndoManager();
+        var jsUM = jsEditor.session.getUndoManager();
+        var thisHtmlLast = htmlUM.$rev;
+        var thisCssLast = cssUM.$rev;
+        var thisJsLast = jsUM.$rev;
+        return [thisHtmlLast, thisCssLast, thisJsLast];
+      },
+      isDirty: function() {
+        var curLastDelta = this.getLastDelta();
+        return this.htmlLast != curLastDelta[0] || this.cssLast != curLastDelta[1] || this.jsLast != curLastDelta[2];
+      },
+      save: function() {
+        var curLastDelta = this.getLastDelta();
+        this.htmlLast = curLastDelta[0];
+        this.cssLast = curLastDelta[1];
+        this.jsLast = curLastDelta[2];
+      }
+    }
+
+    window.addEventListener('beforeunload', function(e) {
+      if (editorState.isDirty()) {
+        e.returnValue = 'You have unsaved changes.';
+      }
+    });
+
+    $('#work-editor-container').resize(function(e) {
+      htmlEditor.resize();
+      cssEditor.resize();
+      jsEditor.resize();
+    })
+    $('#html-editor-tab, #css-editor-tab').resize(
+        {parent: '#work-editor', peers: ['#html-editor-tab', '#css-editor-tab', '#js-editor-tab'], minsize: 25, dir: 'horizontal'}, resizeTabs);
+
+    $('#run').click(function() {
+      document.getElementById('run-iframe').src = '/run/work/'+$('.page-header').data('work-id')+'?time='+Date.now();
+    })
+
+    $('#run-window').click(function() {
+      window.open('/run/work/'+$('.page-header').data('work-id')+'?raw=yes&time='+Date.now(), '_runwindow');
+    })
+
+    $('#run-test').click(function() {
+      document.getElementById('run-iframe').src = '/run/test/'+$('.page-header').data('work-id')+'?time='+Date.now();
+    })
+
+
+    $('#x-save').click(function() {
+      if (!editorState.isDirty())
+        return;
+
+      var exerciseId = $('.page-header').data('exercise-id');
+      var workId = $('.page-header').data('work-id');
+      var studentId = $('.page-header').data('student');
+      $('.page-header').data('savecount', $('.page-header').data('savecount') + 1);
+      
+      var work = {
+        student: studentId,
+        exercise: exerciseId,
+        html: htmlEditor.getValue(),
+        css: cssEditor.getValue(),
+        js: jsEditor.getValue(),
+        savecount: $('.page-header').data('savecount')
+      };
+      work.hash = md5(work.html+work.css+work.js);
+
+      editorState.save();
+      if (!workId) {
+        fetch('/work', {
+          method: 'POST', // or 'PUT'
+          body: JSON.stringify(work), 
+          credentials: 'include',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+          })
+        }).then(res => res.json())
+        .then(response => {
+          //- console.log('Success:', response);
+          $('.page-header').data('work-id', response.workId);
+        })
+        .catch(error => console.error('Error:', error))
+      }
+      else {
+        fetch('/work/'+workId, {
+          method: 'PUT', // or 'PUT'
+          body: JSON.stringify(work),
+          credentials: 'include',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+          })
+        }).then(res => res.json())
+        //- .then(response => console.log('Success:', response))
+        .catch(error => console.error('Error:', error));
+      }
+    });

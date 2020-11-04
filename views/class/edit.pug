@@ -1,0 +1,303 @@
+extends ../layout
+
+append page-style
+  style.
+
+    span.in-class {
+      display: inline-block;
+      width: 2.5rem;
+    }
+
+    div.deadline {
+      margin-left: 2.5rem;
+    }
+    div.deadline::before {
+      content: 'Deadline:';
+      margin-right: 1rem;
+    }
+
+    input.deadline {
+      width: 24rem;
+    }
+
+    .instruction {
+      margin: 1rem 0 2rem 2.5rem;
+      //- max-height: 15rem;
+      overflow: hidden;
+    }
+
+    //- .instruction::before {
+    //-   content: 'instruction';
+    //-   font-size: 75%;
+    //-   background-color: green;
+    //-   color: white;
+    //- }
+
+    //- .instruction.test-code::before {
+    //-   content: 'instruction & testcode';
+    //-   font-size: 75%;
+    //-   background-color: green;
+    //-   color: white;
+    //- }
+
+block content
+  .container
+    .page-header(data-id=classData._id)
+        h3 #{classData.classId}
+        nav(aria-label="breadcrumb")
+          ol.breadcrumb
+            li.breadcrumb-item(aria-current="page")
+              a(href="/course")
+                | All Courses
+            li.breadcrumb-item(aria-current="page")
+              a(href="/course/" + courseData.id)
+                | #{courseData.title}
+            li.breadcrumb-item.active(aria-current="page")
+              | #{classData.classId}
+    
+    .form-horizontal
+      .form-group
+        label.col-sm-2.control-label(for='classId') Class ID
+        .col-sm-7
+          input.form-control(type='text', name='classId', id='classId', placeholder='Class ID', value=classData.classId)
+
+  #signupbox.mainbox.col-md-9.col-md-offset-2.col-sm-8.col-sm-offset-2(style=' margin-top:50px; margin-bottom:50px')
+    .panel.panel-info
+      .panel-heading(style="background-color:#343a40")
+        .panel-title Data
+        div(style='float:right; font-size: 85%; position: relative; top:-10px')
+      .panel-body
+        form(method='post' action='.')
+          input(type='hidden' name='csrfmiddlewaretoken' value='XFe2rTYl9WOpV8U6X5CfbIuOZOELJ97S')
+          form.form-horizontal(method='post')
+            input(type='hidden' name='csrfmiddlewaretoken' value='XFe2rTYl9WOpV8U6X5CfbIuOZOELJ97S')
+            #div_id_select.form-group.required
+              label.control-label.col-md-4.requiredField(for='id_select')
+                | Teachers
+                span.asteriskField *
+              #teachers.controls.col-md-8(style='margin-bottom: 10px')
+                each el in teachers
+                  label.radio-inline
+                    input.checkboxinput(data-id=el._id type='checkbox' checked=el.inClass style='margin-bottom: 10px')
+                    |                                          #{el.email}
+            #div_id_As.form-group.required
+              label.control-label.col-md-4.requiredField(for='id_As')
+                | Assistants
+                span.asteriskField *
+              #assistants.controls.col-md-8(style='margin-bottom: 10px')
+                each el in assistants
+                  label.radio-inline
+                    input#id_select_1(data-id=el._id type='checkbox' checked=el.inClass style='margin-bottom: 10px')
+                    |                                          #{el.email}
+            #div_id_As.form-group.required
+              label.control-label.col-md-4.requiredField(for='id_As')
+                | Students
+                span.asteriskField *
+              #students.controls.col-md-8(style='margin-bottom: 10px')
+                each el in students
+                  label.radio-inline
+                    input#id_select_1(data-id=el._id type='checkbox' checked=el.inClass style='margin-bottom: 10px')
+                    |                                          #{el.email}
+            #div_id_As.form-group.required
+              label.control-label.col-md-4.requiredField(for='id_As')
+                | Exercises
+                span.asteriskField *
+              controls.col-md-8(style='margin-bottom: 10px')
+                each el in exercises
+                  .exercise(data-id=el._id)
+                    .col-xs-12
+                      div
+                        span.in-class
+                          input.in-class(
+                            type='checkbox'
+                            data-id=el._id
+                            data-checked=el.active
+                            checked=el.active
+                            style='margin-bottom: 10px'
+                          )
+                        a.title(href='/exercise/'+el._id)= el.title
+                      .deadline
+                        input#datepicker.input-md.textinput.textInput.form-control.deadline.datepicker(
+                          type='text'
+                          data-id=el._id
+                          data-deadline=el.deadline
+                          value=el.deadline
+                          name="date"
+                        )
+                    .col-xs-12.col-sm-8
+                      div(class='instruction '+((el.testcode|| '').trim().length ? 'test-code': 'no-test-code'))!= el.instruction     
+            //-     each el in exercises
+            //-       .exercise(data-id=el._id)
+            //-         label.radio-inline
+            //-           input#id_select_1.in-class(type='checkbox' data-id=el._id data-checked=el.active checked=el.active style='margin-bottom: 10px')
+            //-           |                                          
+            //-           a.title(href='/exercise/'+el._id)= el.title
+
+            //-       .deadline
+            //-         input.input-md.textinput.textInput.form-control.deadline(
+            //-           type='text'
+            //-           data-id=el._id
+            //-           data-deadline=el.deadline
+            //-           value=el.deadline
+            //-         )
+            //-         br|                                          Agree with the terms and conditions
+            .form-group
+              button#bt-update.col-sm-3.btn.btn-primary
+                i.fa.fa-save
+                | Update
+          .container
+            input.courseId(type='hidden' value=classData.courseId)
+    //- h4 Teachers
+    //- .row#teachers
+    //-   each el in teachers
+    //-     .col-xs-12.col-sm-6.col-md-4
+    //-       span.in-class
+    //-         input(
+    //-           data-id=el._id
+    //-           type='checkbox'
+    //-           checked=el.inClass
+    //-         )
+    //-       span.user-email= el.email
+
+    //- h4 Assistants
+    //- .row#assistants
+    //-   each el in assistants
+    //-     .col-xs-12.col-sm-6.col-md-4
+    //-       span.in-class
+    //-         input(
+    //-           data-id=el._id
+    //-           type='checkbox'
+    //-           checked=el.inClass
+    //-         )
+    //-       span.user-email= el.email
+
+
+    //- h4 Students
+    //- .row#students
+    //-   each el in students
+    //-     .col-xs-12.col-sm-6.col-md-4
+    //-       span.in-class
+    //-         input(
+    //-           data-id=el._id
+    //-           type='checkbox'
+    //-           checked=el.inClass
+    //-         )
+    //-       span.user-email= el.email
+
+
+    //- h4 Exercises
+    //- each el in exercises
+    //-   .row.exercise(data-id=el._id)
+    //-     .col-xs-12
+    //-       div
+    //-         span.in-class
+    //-           input.in-class(
+    //-             type='checkbox'
+    //-             data-id=el._id
+    //-             data-checked=el.active
+    //-             checked=el.active
+    //-           )
+    //-         a.title(href='/exercise/'+el._id)= el.title
+    //-       .deadline
+    //-         input.deadline(
+    //-           type='text'
+    //-           data-id=el._id
+    //-           data-deadline=el.deadline
+    //-           value=el.deadline
+    //-         )
+    //-     .col-xs-12.col-sm-8
+    //-       div(class='instruction '+((el.testcode|| '').trim().length ? 'test-code': 'no-test-code'))!= el.instruction     
+    //- table#exercises
+    //-   each el in exercises
+    //-     tr
+    //-       td
+    //-         input.in-class(
+    //-           data-id=el._id
+    //-           type='checkbox'
+    //-           checked=el.active
+    //-         )
+    //-       td
+    //-         input.deadline(
+    //-           data-id=el._id
+    //-           type='text'
+    //-           checked=el.deadline
+    //-         )
+    //-       td.title
+    //-         a(href='/exercise/'+el._id)= el.title
+    //-       td.instruction!= el.instruction
+    //-       td.testcode!= (el.testcode||'').substring(0, 100)
+
+    //- .form-group
+      //- button#bt-update.col-sm-3.btn.btn-primary
+        i.fa.fa-save
+        | Update
+  script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js')
+  link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css')
+
+append end-script
+  script.
+   
+    $('#datepicker').datepicker()
+    
+    $('#exercises input.in-class').change(function(e) {
+      if (!this.checked) {
+        $(this).parents('tr').find('input.displayed').prop('checked', false);
+      } 
+    });
+
+    $('#exercises input.displayed').change(function(e) {
+      if (this.checked) {
+        $(this).parents('tr').find('input.in-class').prop('checked', true);
+      }
+    });
+
+    $('#bt-update').click(function() {
+      const teachers = Array.from($('#teachers  input[type=checkbox]').filter((idx,el)=>el.checked).map((id,el)=>$(el).data('id')));
+      const assistants = Array.from($('#assistants  input[type=checkbox]').filter((idx,el)=>el.checked).map((id,el)=>$(el).data('id')));
+      const students = Array.from($('#students  input[type=checkbox]').filter((idx,el)=>el.checked).map((id,el)=>$(el).data('id')));
+    
+      var exercises = Array.from($('.exercise'))
+        .map((el) => {
+          var exObj = {
+            exId: el.dataset.id,
+            active: el.querySelector('input.in-class[type=checkbox]').checked,
+            deadline: new Date(el.querySelector('input.deadline[type=text]').value)
+          };
+          if (exObj.active && !(exObj.deadline > 0))
+            exObj.deadline = new Date(parseInt(Date.now()/86400000 + 365)*86400000); // one year from now
+          return exObj;
+        })
+        .filter((el) => { return el.active || el.deadline > 0});
+
+      //- const exerciseActive = Array.from($('.exercise input[type=checkbox]').filter((idx,el)=>el.checked).map((id,el)=>{return {id:$(el).data('id'),type:$(el).attr('class')}}));
+      //- const exercises = exerciseData.filter((e)=>e.type==='in-class').map((e)=>e.id);
+      //- const displayedExercises = exerciseData.filter((e)=>e.type==='displayed').map((e)=>e.id);
+  
+      const classData = {
+        staff: teachers.concat(assistants),
+        students,
+        exercises,
+        classId: $('#classId').val()
+      };
+
+      
+      //- console.log();
+      console.log(classData);
+      fetch('/class/'+$('.page-header').data('id'), {
+          method: 'PUT',
+          body: JSON.stringify(classData), 
+          headers: new Headers({
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+          'credentials': 'same-origin',
+          })
+      }).then(res => res.json())
+      .catch(error => console.error('Error:', error))
+      .then(response => { 
+            var courseId = $('.courseId').val()
+            console.log('Success:', response);
+            window.location.href = '/course/' + courseId;
+        }); 
+      
+
+    });

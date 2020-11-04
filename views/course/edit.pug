@@ -1,0 +1,356 @@
+extends ../layout
+
+block content
+  .container
+    .page-header(data-id=ex._id)
+      h3 #{title}'s Courses
+      h5 Created by #{author}
+      h5
+        a.badge.badge-yellow(href='/course/livecourses/'+ idCourse,style="margin-right:5px;") Live Class
+      
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item(aria-current="page")
+          a(href="/course")
+            | All Courses
+        li.breadcrumb-item.active(aria-current="page")
+          | #{title}'s Course
+    
+  .container
+    if(user.role != 'student')
+    #accordion
+      .card
+        #headingTwo.card-header
+          h5.mb-0.col-md-9
+            button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseTwo' aria-expanded='false' aria-controls='collapseTwo')
+              | Course Module 
+              i.fa.fa-angle-down
+          if(user.role == 'teacher' || user.role == 'admin')
+            h5.mb-0.col-md-3
+              button.btn.btn-link(type='button' data-toggle='modal' data-target='#exampleModalCenter')
+                i.fa.fa-plus-circle
+                | Add New Module
+        #collapseTwo.collapse(aria-labelledby='headingTwo' data-parent='#accordion')
+          .card-body
+            ul.list-group
+            each c in modules
+              li.list-group-item(style="height:50px")
+                a.nounderline(href='/course/'+ ex._id +'/' + c.id) #{c.titleModule}&nbsp
+                if (user.role == 'teacher' || user.role == 'admin')
+                  span.pull-right         
+                    //- a(href='#',style="margin-right:5px;", onclick='deleteId(\'' + c.id + '\')') 
+                    //-   i.fa.fa-trash(style='color: red') 
+                    a.btn.btn-sm.btn-danger(href='#' + c.id, style="margin-left:1%; border-radius:20px" onclick='deleteId(\'' + c.id + '\')')
+                      | Delete  
+                      span.fa.fa-trash   
+                span.pull-right(style="margin-right:1%")         
+                    //- a.badge(href='/course/preview/'+ex._id+'/'+c.id,style="margin-right:11px;") Preview
+                    a.btn.btn-sm.btn-primary(href='/course/preview/'+ex._id+'/'+c.id, style="margin-left:1%; border-radius:20px")
+                      | Preview  
+                      span.fa.fa-arrow-right
+      .card
+        #headingThree.card-header
+          h5.mb-0.col-md-9
+            button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseThree' aria-expanded='false' aria-controls='collapseThree')
+              | Class 
+              i.fa.fa-angle-down
+          if(user.role == 'teacher' || user.role == 'admin')
+            h5.mb-0.col-md-3
+             button.btn.btn-link(type='button' data-toggle='modal' data-target='#exampleModalCenterClass')
+                i.fa.fa-plus-circle
+                | Add New Class
+
+        #collapseThree.collapse(aria-labelledby='headingThree' data-parent='#accordion')
+          .card-body
+            ul.list-group
+              if(classes == 0)
+                p Data not exist
+              each c in classes
+                li.list-group-item(style="height:50px")
+                  // i.fa.fa-circle
+                  a.nounderline(href='/course/'+c.courseId+'/class/' + c.id) #{c.classId}&nbsp
+                    span.pull-right
+                      //- a.badge(style="margin-right:5px;") Live Class
+                      a.pull-right.btn.btn-sm.btn-primary(href='/classlog/' + c.id, style="margin-left:1%; border-radius:20px") 
+                        | Live Class             
+                        span.fa.fa-video-camera 
+                      if (user.role == 'teacher' || user.role == 'assistant' || user.role == 'admin')
+                        //- a.badge(href='/classlog/' + c.id,style="margin-right:5px;")  Stats
+                        a.pull-right.btn.btn-sm.btn-primary(href='/classlog/' + c.id, style="margin-left:1%; border-radius:20px") 
+                          | Stats             
+                          span.fa.fa-bar-chart 
+                      if (user.role == 'teacher'|| user.role == 'admin')
+                        //- a.badge(style="margin-right:5px;", href='/class-staff/' + c.id)  Staff
+                        a.pull-right.btn.btn-sm.btn-primary(href='/class-staff/' + c.id, style="margin-left:1%; border-radius:20px") 
+                          | Staff  
+                          span.fa.fa-user 
+                        //- a.badge.badge-red(href='#',style="margin-right:5px;", onclick='deleteIdClass(\'' + c.id + '\')') 
+                        //-   i.fa.fa-trash(style='color: red')
+                        a.pull-right.btn.btn-sm.btn-danger(href='#' + c.id, style="margin-left:1%; border-radius:20px" onclick='deleteIdClass(\'' + c.id + '\')') 
+                          | Delete  
+                          span.fa.fa-trash   
+      .card
+        #headingFour.card-header
+          h5.mb-0.col-md-9
+            button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFour' aria-expanded='false' aria-controls='collapseThree')
+              | Exercise 
+              i.fa.fa-angle-down
+          if(user.role == 'teacher' || user.role == 'admin')
+            h5.mb-0.col-md-3
+             a(href='/course/exercise/' + ex.id) 
+               button.btn.btn-link
+                  i.fa.fa-plus-circle
+                  | Add New Exercise
+
+        #collapseFour.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
+          .card-body
+            if (user.role == 'teacher' || user.role == 'admin')
+            ul.list-group
+              if(exercises == 0)
+                p Data not exist
+              each c in exercises
+                li.list-group-item(style="height:50px")
+                  // i.fa.fa-circle
+                  a.nounderline(href='/course/exercise/'+ ex._id +'/' + c._id) #{c.title}
+                  if (user.role == 'teacher' || user.role == 'admin' || user.role == 'assistant')
+                    span.pull-right        
+                      //- a(href='#',style="margin-right:5px;", onclick='deleteIdExercise(\'' + c.id + '\')') 
+                      //-   i.fa.fa-trash(style='color: red') 
+                      a.btn.btn-sm.btn-danger(href='#' + c.id, style="margin-left:1%; border-radius:20px" onclick='deleteIdExercise(\'' + c.id + '\')')
+                        | Delete             
+                        span.fa.fa-trash
+
+      .card
+        #headingFour.card-header
+          h5.mb-0.col-md-9
+            button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFive' aria-expanded='false' aria-controls='collapseThree')
+              | Quis 
+              i.fa.fa-angle-down
+          if(user.role == 'teacher' || user.role == 'admin')
+            h5.mb-0.col-md-3
+              a.nounderline(href='/course/'+ ex._id +'/quis/add')
+                button.btn.btn-link(type='button')
+                    i.fa.fa-plus-circle
+                    | Add New Quis
+
+        #collapseFive.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
+          .card-body
+            if (user.role == 'teacher' || user.role == 'admin')
+            ul.list-group
+              if(quis == 0)
+                p Data not exist
+              each c in quis
+                li.list-group-item
+                  // i.fa.fa-circle
+                  a.nounderline(href='/quis/'+ ex._id +'/' + c._id) #{c.title}
+                  //- if (user.role == 'teacher' || user.role == 'admin' || user.role == 'assistant')
+                  //-   span.pull-right        
+                  //-     a(href='#',style="margin-right:5px;", onclick='deleteIdQuis(\'' + c._id + '\')') 
+                  //-       i.fa.fa-trash(style='color: red') 
+        
+      .card
+        #headingFour.card-header
+          h5.mb-0.col-md-9
+            button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseSix' aria-expanded='false' aria-controls='collapseThree')
+              | Forum Discussion 
+              i.fa.fa-angle-down
+          h5.mb-0.col-md-3
+            a.nounderline(href='/course/'+ ex._id +'/forum/add')
+              button.btn.btn-link(type='button')
+                  i.fa.fa-plus-circle
+                  | Add New 
+
+        #collapseSix.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
+             .card-body
+                if (user.role == 'teacher' || user.role == 'admin')
+                ul.list-group
+                  if(forum == 0)
+                    p Data not exist
+                  each c in forum
+                    li.list-group-item
+                      // i.fa.fa-circle
+                      a.nounderline(href='/course/'+ ex._id +'/forum/' + c._id) #{c.title} 
+                      
+
+  #exampleModalCenter.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalCenterTitle' aria-hidden='true')
+   form.form-horizontal
+    .modal-dialog.modal-dialog-centered.modal-add-course(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLongTitle.modal-title Module Title : 
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          form.form-horizontal
+          .form-group
+            .col-sm-12
+              input.form-control(type='text', name='title', id='title', placeholder='Module Title',autocomplete='off')
+        .modal-footer
+          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+          button#bt-new.btn.btn-primary Save changes
+
+  #exampleModalCenterClass.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalCenterTitle' aria-hidden='true')
+   form.form-horizontal
+    .modal-dialog.modal-dialog-centered.modal-add-course(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLongTitle.modal-title Class Title : 
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          form.form-horizontal
+          .form-group
+            .col-sm-12
+              select.form-control(name="classId",id='classId')
+                option(value=title + " A")
+                  | #{title} A
+                option(value=title + " B")
+                  | #{title} B
+                option(value=title + " C")
+                  | #{title} C
+                option(value=title + " D")
+                  | #{title} D
+                  
+              //- input.form-control(type='text', name='classId', id='classId', placeholder='Class ID',autocomplete='off')
+        .modal-footer
+          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+          button#bt-new-class.btn.btn-primary Save changes
+
+  #exampleModalCenterExercise.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalCenterTitle' aria-hidden='true')
+   form.form-horizontal
+    .modal-dialog.modal-dialog-centered.modal-add-course(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLongTitle.modal-title Exercise
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          form.form-horizontal
+          .form-group
+            .col-sm-12
+              input.form-control(type='text', name='classId', id='classId', placeholder='Class ID',autocomplete='off')
+        .modal-footer
+          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+          button#bt-new-class.btn.btn-primary Save changes
+
+  #exampleModalCenterQuis.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalCenterTitle' aria-hidden='true')
+        form.form-horizontal
+            .modal-dialog.modal-dialog-centered.modal-add-course(role='document')
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLongTitle.modal-title Exercise
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') &times;
+                    .modal-body
+                        form.form-horizontal
+                        .form-group.new-question
+                            .col-sm-12
+                                input.form-control(type='text', name='quisTitle', id='quisTitle', placeholder='Class ID',autocomplete='off')
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                        button#bt-new-quis.btn.btn-primary Save changes
+
+
+append end-script
+  script.
+    function deleteId(id){
+      var r = confirm("Are you sure want to delete this module?");
+      if(r==true){
+         window.location.href = '/course/delete/#{ex._id}/' + id;
+      }
+    }
+    $('#bt-new').click(function() {
+        var newCourse = {
+            courseId : '#{ex._id}',
+            titleModule : $('#title').val(),
+            order : 100,
+            lasteditedModule : '#{user._id}',
+        };
+        fetch('/course/#{ex._id}', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newCourse),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {console.log('Success:', response); window.location.href = '/course/#{ex._id}';}); 
+    return false;
+    }) 
+
+    function deleteIdClass(id){
+      var r = confirm("Are you sure to delete class ?");
+      if(r==true){
+         window.location.href = '/class/delete/' + id;
+      }
+    }
+
+    function deleteIdQuis(id){
+      var r = confirm("Are you sure to delete quis ?");
+      if(r==true){
+         window.location.href = '/course/quis/delete/#{ex._id}/' + id;
+      }
+    }
+
+    $('#bt-new-class').click(function() {
+        var newClass = {
+            classId: $('#classId').val(),
+           courseId : '#{ex._id}',
+        };
+        fetch('/class', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newClass),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => console.log('Success:', response)); 
+        
+    })   
+
+    function deleteIdExercise(id){
+      var r = confirm("Are you sure want to delete this exercise?");
+      if(r==true){
+         window.location.href = '/course/exercise/delete/#{ex._id}/' + id;
+      }
+    }
+
+    $('#bt-new-quis').click(function() {
+        var questionJson = [
+          {
+          ask:"ask",
+          score:10,
+          answer:"B"
+          },
+          {
+          ask:"ask21",
+          score:10,
+          answer:"B"
+          },
+        ]
+        var newQuis = {
+            title : $('#quisTitle').val(),
+            courseId : '#{ex._id}',
+            question : questionJson
+        };
+        fetch('/quis', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newQuis),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {console.log('Success:', response); window.location.href = '/course';}); 
+    return false;
+    }) 
+
+
+

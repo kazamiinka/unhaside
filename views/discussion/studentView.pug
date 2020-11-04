@@ -1,0 +1,153 @@
+extends ../layout
+
+block content
+  .container
+      .page-header(data-id=ex._id)
+        nav(aria-label="breadcrumb")
+          ol.breadcrumb
+            li.breadcrumb-item(aria-current="page")
+              a(href="/course")
+                | All Courses
+            li.breadcrumb-item(aria-current="page")
+              a(href="/course/" + courseId)
+                | #{courseTitle}
+            li.breadcrumb-item(aria-current="page")
+              a(href="/course/" + courseId)
+                | Forum
+            li.breadcrumb-item.active(aria-current="page")
+              | #{title}'s Forum
+        
+  .container
+    .row
+        .card
+            .card-header.text-center
+                 h2=title
+            .card-body
+                form
+                    .form-group
+                        p=ex.topic
+                        
+    .form-group.shadow-textarea
+        label(for='exampleFormControlTextarea6')
+        textarea#exampleFormControlTextarea6.form-control.z-depth-1(name="comment",rows='3' placeholder='Put your comment here')
+        br
+        button.btn.btn-success.add-comment(type='button') Submit
+        //- hr.solid
+    .row
+      h3 Comment
+      .card
+          #headingFour.card-header
+            h5.mb-0.col-md-9
+              button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFive' aria-expanded='false' aria-controls='collapseThree')
+                | Komentar 
+                i.fa.fa-angle-down
+
+
+          #collapseFive.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
+              .card-body
+                ul.list-group
+                  if(discussion == 0)
+                    p Data not exist
+                  - var num = 12
+                  
+                  each disc in discussion
+                    - var str = disc.userId;
+                    li.list-group-item
+                      // i.fa.fa-circle
+                      .geser
+                        .media
+                          .media-left
+                            svg(data-jdenticon-value=str width='80' height='80')
+                              | Fallback text or image for browsers not supporting inline 
+                          .media-body
+                            h4.media-heading.title=lastLetter
+                            p.komen=disc.comment
+                              br
+                              p=prettyDate(disc.createdAt)
+                      hr.dashed
+                  -function prettyDate(dateString){
+                    //if it's already a date object and not a string you don't need this line:
+                    -var date = new Date(dateString);
+                    -var d = date.getDate();
+                    -var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+                    -var m = monthNames[date.getMonth()];
+                    -var y = date.getFullYear();
+                    -var h = date.getHours();
+                    -var mi = date.getMinutes();
+                    -return d+' '+m+' '+y +' '+h+':'+mi;
+                -}
+
+
+    #popUpScore.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            //- .modal-content
+            .alert.alert-success.fade.in
+              button.close(type='button', data-dismiss='alert')
+                i.fa.fa-times-circle-o
+              //- for success in messages.success
+              div Komentar Berhasil di tambahkan
+
+  
+append end-script
+  script(src='https://cdn.jsdelivr.net/npm/jdenticon@3.0.1' async='')
+  script.
+    //- $('.no-avatar').gixi();
+    //- var imageSize = 300;
+    //- var imageData = new gixi(imageSize).getImage();
+    //- var element = document.getElementById('random');
+    //- element.setAttribute('src', imageData);
+
+    $('.add-comment').on('click',function(){
+        var _this = $(this);
+        var _title = _this.siblings('input[name="title"]').val()
+        var _val = _this.siblings('textarea[name="comment"]').val()
+        console.log(_val)
+
+        var newQuis = {
+                courseId : '#{courseId}',
+                userId : '#{user.id}',
+                userName:'#{user.profile.name || user.email}',
+                forumId:'#{ex.id}',
+                comment:_val,
+            };
+            fetch('/forum/discussion', {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(newQuis),
+                credentials: 'include',
+                headers: new Headers({
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+                })
+            }).then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => { 
+                var courseId = '#{courseId}'
+                var forumId = '#{ex.id}'
+                console.log('Success:', response);
+                $('#popUpScore').modal('show');
+                setTimeout(function(){ 
+                    window.location.href = '/course/' + courseId + '/forum/' + forumId;
+                }, 1000);
+                
+            }); 
+        return false;
+        })
+
+  style.
+    .title {
+    font-size: 14px;
+    font-weight:bold;
+    }
+    .komen {
+    font-size:14px;
+    }
+    .geser {
+    margin-left:55px;
+    margin-top:5px;
+    }
+    hr.dashed {
+    border-top: 2px dashed #999;
+    }
+    hr.solid {
+    border-top: 2px solid #999;
+    }

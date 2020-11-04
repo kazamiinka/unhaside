@@ -1,0 +1,63 @@
+extends ../layout
+
+block content
+  .container
+    .page-header
+
+  .container
+    .col-sm-2(style="height:auto; padding-bottom:100px; border-right:solid 2px #343a40;margin-top:70px")
+      nav.nav-sidebar
+         ul.nav.tabs
+            -var num = 1
+            each c in modules
+                li
+                    a(href='#tab'+(num++) data-toggle='tab') #{c.titleModule}
+    // tab content
+    .tab-content
+        #tab01.tab-pane.active.text-style
+            .jumbotron
+                h1.display-3 #{ex.title}
+                //- p.lead Bootstrap Jumbotron to highlight speciality of your wesbites.
+                hr.m-y-md
+                p
+                //- | Use this Feature to Display Content and Messages
+                //- | spanning the entire viewport.
+                //- p.lead
+                //- a.btn.btn-success.btn-lg(href='http://www.bootstrap-tutorials.com' role='button') Visit Now
+        - var set = 1
+        each c in modules
+            div(id="tab"+(set++)).tab-pane.text-style
+                .col-md-8
+                    h2 #{c.titleModule}
+                    - var text=c.module
+                    p!=text
+                    hr
+                    //- img.img-rounded.pull-right(src='http://placehold.it/350x250')
+
+
+append end-script
+  script.
+    function deleteId(id){
+      var r = confirm("Are you sure want to delete this course?");
+      if(r==true){
+         window.location.href = '/course/delete/' + id;
+      }
+    }
+    $('#bt-new').click(function() {
+        var newCourse = {
+            title: $(this).closest('.modal-add-course').find('#title').val(),
+            author : '#{user._id}',
+            order: 100
+        };
+        fetch('/course', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newCourse),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => console.log('Success:', response)); 
+    })    

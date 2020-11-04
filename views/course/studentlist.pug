@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  .container
+    .page-header
+      if(courses.length>0)
+        h3 My Courses
+      else
+        .alert.alert-warning(role='alert') 
+                    | Oops... You are not ass igned in a class, yet.
+                    | Please wait a moment...
+    
+    .row
+      each c in courses
+        .col-md-4
+          .card.mb-4.box-shadow(style='height: 100% !important; margin-top:5%')
+            img.card-img-top(src='https://images.pexels.com/photos/247791/pexels-photo-247791.png?auto=compress&cs=tinysrgb&dpr=2&h=200&w=300', alt='Card image cap')
+            .card-body
+              p.card-text
+                | #{c.title}
+              .d-flex.justify-content-between.align-items-center
+                .btn-group
+                  a.btn.btn-xs.btn-outline-secondary(type='button',href='/course/preview/' + c.id, style="margin-right:5px") Continue Learning
+                  a.btn.btn-xs.btn-outline-secondary(type='button',href='/course/livecourses/' + c.id, style="margin-right:5px") Live Class
+                //- a.btn.btn-link(href='/course/delete/' + c.id)  Delete

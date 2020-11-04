@@ -1,0 +1,81 @@
+extends ../layout
+
+block content
+  .container
+    .page-header(data-id=course._id)
+            nav(aria-label="breadcrumb")
+                ol.breadcrumb
+                    li.breadcrumb-item(aria-current="page")
+                        a(href="/course")
+                            | All Courses
+                    li.breadcrumb-item(aria-current="page")
+                        a(href="/course/" + course.id)
+                            | #{course.title}
+                    li.breadcrumb-item.active(aria-current="page")
+                        | Forum 
+                    li.breadcrumb-item.active(aria-current="page")
+                        | Add Forum 
+    .row
+        .card
+            .card-header.text-center
+                 h2 Add Forum
+            .card-body
+                form
+                    .form-group
+                    label Forum Title
+                    input.form-control.form-control-lg(type='text' name="title" placeholder='Title')
+                    label(for='exampleFormControlTextarea6') Question or Topic
+                    textarea#exampleFormControlTextarea6.form-control.z-depth-1(name="question",rows='3' placeholder='Put your comment here')
+                    br
+                    button.btn.btn-success.add-comment-forum(type='button', data-user=user.role) Submit
+
+    #popUpScore.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            //- .modal-content
+            .alert.alert-success.fade.in
+              button.close(type='button', data-dismiss='alert')
+                i.fa.fa-times-circle-o
+              //- for success in messages.success
+              div Forum Berhasil di tambahkan
+
+
+append end-script
+  script.
+    $('.add-comment-forum').on('click',function(){
+        var _this = $(this);
+        var _title = _this.siblings('input[name="title"]').val()
+        var _val = _this.siblings('textarea[name="question"]').val()
+        console.log(_val)
+
+        var newQuis = {
+                courseId : '#{course.id}',
+                userId : '#{user.id}',
+                userName:'#{user.profile.name || user.email}',
+                title:_title,
+                topic:_val
+            };
+            fetch('/forum', {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(newQuis),
+                credentials: 'include',
+                headers: new Headers({
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+                })
+            }).then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => { 
+                var courseId = '#{course.id}'
+                var url = '/course/preview/' + courseId;
+                if(_this.data('user') == 'teacher'){
+                    url = '/course/' + courseId;
+                }
+                console.log('Success:', response);
+                $('#popUpScore').modal('show');
+                setTimeout(function(){ 
+                    window.location.href = url
+                }, 1000);
+                
+            }); 
+        return false;
+        })

@@ -1,0 +1,154 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 New Exercise
+
+  #editor-container
+    #editor
+      #html-editor-tab.tab
+        .editor-header HTML
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span HTML
+        #html-editor.spell-editor
+
+      #css-editor-tab.tab
+        .editor-header CSS
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span CSS
+        #css-editor.spell-editor
+
+      #js-editor-tab.tab
+        .editor-header JavaScript
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span JavaScript
+        #js-editor.spell-editor 
+
+      #testcode-editor-tab.tab
+        .editor-header Test Code Template
+        .editor-left
+          .editor-left-text.vertical-text.hide
+            i.fa.fa-angle-up.fa-lg
+            span Test Code Template
+        #testcode-editor.spell-editor
+
+
+    #run-result.row
+
+append end-script
+  script(src='/ace/src-noconflict/ace.js')
+  script.
+    //- $(function() {
+      $('#html-editor-tab').resizable({handles:'e', minWidth:25});
+      $('#css-editor-tab').resizable({handles:'e', minWidth:25});
+      $('#js-editor-tab').resizable({handles:'e', minWidth:25});
+      $('#testcode-editor-tab').resizable({handles:'xoxo', minWidth:25});
+
+      var htmlEditor = ace.edit('html-editor');
+      htmlEditor.setTheme('ace/theme/monokai');
+      htmlEditor.session.setMode('ace/mode/html');
+      
+      var cssEditor = ace.edit('css-editor');
+      cssEditor.setTheme('ace/theme/monokai');
+      cssEditor.session.setMode('ace/mode/css');
+
+      var jsEditor = ace.edit('js-editor');
+      jsEditor.setTheme('ace/theme/monokai');
+      jsEditor.session.setMode('ace/mode/javascript');
+
+      var testEditor = ace.edit('testcode-editor');
+      testEditor.setTheme('ace/theme/monokai');
+      testEditor.session.setMode('ace/mode/javascript');
+
+      (function($) {
+        $.fn.resizeTab = function(action) {
+            if (action == 'minimize') {
+              $(this).width(25).data('ui-tab-resize-status','minimized').resize();
+              // $(this).find('.editor-header').hide();
+              $(this).find('.editor-left').width(25).height('100%');
+              $(this).find('.editor-left-text').removeClass('hide');
+              // $(this).find('.spell-editor').hide();
+            }
+            else if (action == 'open') {
+              $(this).removeData('ui-tab-resize-status').resize();
+              $(this).find('.spell-editor').show();
+              // $(this).find('.editor-header').show();
+              $(this).find('.editor-left').removeClass('tab-border').width(5).height('100%');
+              $(this).find('.editor-left-text').addClass('hide');
+            }
+            else if (action == 'maximize') {
+              $(this).width('100vw').data('ui-tab-resize-status','maximized').resize();
+              $(this).find('.spell-editor').show();
+              // $(this).find('.editor-header').show();
+              $(this).find('.editor-left').removeClass('tab-border').width(5).height('100%');
+              $(this).find('.editor-left-text').addClass('hide');
+            }
+            else {
+              $(this).width(action).removeData('ui-tab-resize-status');
+              $(this).find('.spell-editor').show();
+              // $(this).find('.editor-header').show();
+              $(this).find('.editor-left').removeClass('tab-border').width(5).height('100%');
+              $(this).find('.editor-left-text').addClass('hide');
+            }
+        }
+      })(jQuery);
+
+
+      $('#html-editor-tab, #css-editor-tab, #js-editor-tab').resize(
+          {parent: '#editor', peers: ['#html-editor-tab', '#css-editor-tab', '#js-editor-tab', '#testcode-editor-tab'], minsize: 25, dir: 'horizontal'},
+          function(e, ui) {
+            if (e.data.dir === 'horizontal') {
+              var parentWidth = $(e.data.parent).width();
+              var myWidth = $(this).width();
+              var myId = '#'+$(this).attr('id');
+              var myIdx = e.data.peers.indexOf(myId);
+              var leftIds = e.data.peers.filter((el, idx) => idx < myIdx);
+              var myLeftId = e.data.peers.filter((el, idx) => idx === myIdx-1);
+              var myRightId = e.data.peers.filter((el, idx) => idx === myIdx+1);
+              var rightIds = e.data.peers.filter((el, idx) => idx > myIdx);
+              var right1Ids = e.data.peers.filter((el, idx) => idx > myIdx+1);
+              
+              const widthReducer = (acc, cv) => acc + $(cv).width();
+              var availWidth = parentWidth - leftIds.reduce(widthReducer,0) - myWidth - right1Ids.reduce(widthReducer,0);
+
+              $(myLeftId[0]).resizable('option','maxWidth', $(myLeftId[0]).width() + myWidth - e.data.minsize);
+
+              if (ui)
+                $(this).resizable('option', 'maxWidth', parentWidth - right1Ids.reduce(widthReducer,0) - e.data.minsize);
+
+              // console.log(leftIds,myId, myRightId,rightIds);
+              // console.log(parentWidth,leftIds.reduce(widthReducer,0),myWidth,right1Ids.reduce(widthReducer,0), availWidth, parentWidth - right1Ids.reduce(widthReducer,0) - e.data.minsize);
+              /*
+              if ($(myId).data('ui-tab-resize-status') == 'minimized' && myWidth <= e.data.minsize) {
+                  console.log('do not move');
+                return;
+              }
+              */
+              if ($(myId).data('ui-tab-resize-status') != 'minimized' && myWidth <= e.data.minsize) {
+                $(myId).resizeTab('minimize');
+                return;
+              }
+              
+
+              if ($(myId).data('ui-tab-resize-status') == 'minimized' && myWidth > e.data.minsize) {
+                $(myId).resizeTab(myWidth);
+                //return;
+              }
+              
+
+              if (availWidth > e.data.minsize) {
+                  $(myRightId[0]).resizeTab(availWidth);
+              }
+              else {
+                  $(myRightId[0]).resizeTab('minimize');
+                  // $(myRightId[0]).width(e.data.minsize);
+                  $(this).width((parentWidth - leftIds.reduce(widthReducer,0) - e.data.minsize - Math.max(right1Ids.length*e.data.minsize,right1Ids.reduce(widthReducer,0))));
+              }
+            }
+          });

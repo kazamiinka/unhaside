@@ -1,0 +1,80 @@
+extends ../layout
+
+block content
+  .container
+    .page-header(data-id=ex._id)
+      h3 Edit Module
+      | #{ex.titleModule}
+
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item(aria-current="page")
+          a(href="/course")
+            | All Courses
+        li.breadcrumb-item(aria-current="page")
+          a(href="/course/"+courseId)
+            | #{courseTitle}            
+        li.breadcrumb-item.active(aria-current="page")
+          | #{title}'s Module
+
+    if (user.role == 'teacher')
+    .form-horizontal
+      .form-group
+        label.col-sm-2.control-label(for='classId') Title
+        .col-sm-9
+          input.form-control(type='text', name='titleModule', id='titleModule', placeholder='Title', value=ex.titleModule)
+      .form-group
+        label.col-sm-2.control-label(for='classId') Order
+        .col-sm-9
+          input.form-control(type='text', name='order', id='order', placeholder='Order', value=ex.order)
+      .form-group
+        label.col-sm-2.control-label(for='summernote') Content
+        .col-sm-9
+          - var text = ex.module
+          textarea.form-control(name='module', id='summernote', placeholder='Content')=text
+              
+
+      .form-group
+        .col-sm-offset-2.col-sm-4
+          button#bt-update.col-sm-6.btn.btn-primary
+            i.fa.fa-plus
+              | Update Course
+
+append end-script
+  script.
+    $(document).ready(function() {
+    $('#summernote').summernote({
+      height: 300,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'italic', 'underline', 'clear']],
+          ['fontname', ['fontname']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['height', ['height']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'hr']],
+          ['insert', ['prettyprint']],
+          ['view', ['fullscreen', 'codeview']],
+          ['help', ['help']]
+        ]
+    });
+    });
+    $('#bt-update').click(function() {
+        var updateCourse = {
+            titleModule: $('#titleModule').val(),
+            module: $('#summernote').val(),
+            order: $('#order').val()
+        };
+        fetch('/course/#{courseId}/#{moduleId}', {
+            method: 'PUT', // or 'PUT'
+            body: JSON.stringify(updateCourse),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {console.log('Success:', response); window.location.href = '/course/#{courseId}';}); 
+    })        

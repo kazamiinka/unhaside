@@ -1,0 +1,138 @@
+extends ../layout
+
+append page-style
+  style.
+
+    .hide {
+        display: none;
+    }
+
+    span.red-error {
+        color: #cc0000;
+        font-weigth: bold;
+    }
+
+    span.client-addr {
+        font-size: 80%;
+    }
+
+    span.update-time {
+        font-size: 80%;
+    }
+
+    span.right-align {
+        text-align: right;
+    }
+
+    .room-row {
+        min-height: 4rem;
+        margin: 1rem 0;
+    }
+
+    .room-row:nth-child(even) {
+        min-height: 4rem;
+        margin-bottom: 3rem;
+    }
+
+    .room-col {
+        padding-left: .25rem;
+        padding-right: .25rem;
+        vertical-align: middle;
+    }
+    .room-desk {
+        background-color: lightgray;
+        height: 9rem;
+        text-align: center;
+        line-height: normal;
+        font-family: monospace;
+        font-size: 90%;
+    }
+    .room-desk.assist-self {
+        border: 1px solid green;
+    }
+    .room-desk.assist-other {
+        border: 1px solid red;
+    }
+
+    .hostname {
+        font-size: 75%;
+    }
+
+    .latest-work, .latest-run, .latest-test {
+        padding: 0 .25rem;
+    }
+
+block content
+  .container-fluid
+    .page-header(data-class-id=classId, data-class-title=classTitle, data-user-id=userId)
+        h3#class-title Class Status: #{classTitle}
+
+        //- .row#room-selection
+        //-     .col-xs-2
+        //-         a#class-k.class-selection k
+        //-     .col-xs-2
+        //-         a#class-e.class-selection e
+        //-     .col-xs-2
+        //-         a#class-i.class-selection i
+        //-     .col-xs-2
+        //-         a#class-o.class-selection o
+        //-     .col-xs-2
+        //-         a#class-l1.class-selection l1
+        //-     .col-xs-2
+        //-         a#class-l2.class-selection l2
+
+    #room-details
+
+        each roomval in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            .row.room-row(class=['room-row-'+roomval])
+                .col-xs-3.col-sm-2.room-col
+                    .room-desk.room-col-1(class=['room-colrow-1-'+roomval],data-row-no=roomval,data-col-no=1)
+                        div.hostname
+                        div
+                            div.username
+                            div.latest-test
+                            div.latest-run
+                            div.latest-work
+                .col-xs-3.col-sm-2.room-col
+                    .room-desk.room-col-3(class=['room-colrow-2-'+roomval],data-row-no=roomval,data-col-no=2)
+                        div.hostname
+                        div
+                            div.username
+                            div.latest-test
+                            div.latest-run
+                            div.latest-work
+                .col-xs-3.col-sm-2.room-col
+                    .room-desk.room-col-2(class=['room-colrow-3-'+roomval],data-row-no=roomval,data-col-no=3)
+                        div.hostname
+                        div
+                            div.username
+                            div.latest-test
+                            div.latest-run
+                            div.latest-work
+                .col-xs-3.col-sm-2.room-col
+                    .room-desk.room-col-4(class=['room-colrow-4-'+roomval],data-row-no=roomval,data-col-no=4)
+                        div.hostname
+                        div
+                            div.username
+                            div.latest-test
+                            div.latest-run
+                            div.latest-work
+    
+    #logs-details.modal.fade(tabindex='-1', role='dialog')
+        .modal-dialog(role=document)
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal')
+                    h4.modal-title Details
+                .modal-body
+                    p hello
+                .modal-footer
+                    button.btn.btn-primary(type='button',data-dismiss='modal')
+                        Close
+
+append end-script
+    script(src='https://d3js.org/d3.v5.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.js')
+    script(src='/js/lib/Tocca.min.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='/js/class-staffwork.js')
