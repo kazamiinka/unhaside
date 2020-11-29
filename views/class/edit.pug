@@ -117,7 +117,7 @@ block content
                           )
                         a.title(href='/exercise/'+el._id)= el.title
                       .deadline
-                        input#datepicker.input-md.textinput.textInput.form-control.deadline.datepicker(
+                        input.input-md.textinput.textInput.form-control.deadline(
                           type='text'
                           data-id=el._id
                           data-deadline=el.deadline
@@ -237,7 +237,7 @@ block content
 append end-script
   script.
    
-    $('#datepicker').datepicker()
+    //- $('#datepicker').datepicker()
     
     $('#exercises input.in-class').change(function(e) {
       if (!this.checked) {
