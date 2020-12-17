@@ -122,6 +122,9 @@ exports.getById = async (req, res) => {
         // s.displayed = classData.displayedExercises.indexOf(s._id)>=0;
         return s;
       });
+
+      
+
     // console.log(teachers, assistants, students, exercises);
 
     // res.json({teachers, assistants, students, exercises});
