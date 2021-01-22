@@ -7,7 +7,10 @@ const courseSchema = new mongoose.Schema({
 	author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
 	contributors : [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], 
 	modules : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Modul' }],
-    active: Boolean
+	active: Boolean,
+	status:Boolean,
+	semester:String,
+	status:Boolean
 }, { timestamps: true });
 
 const Course = mongoose.model('Course', courseSchema);
