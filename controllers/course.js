@@ -20,8 +20,10 @@ exports.indexByStudent = async (req, res) => {
   const coursesData = classData.map((e) => { return e.courseId; });
   console.log(coursesData);
 
-
-  var courseList = await Course.find({}, {}, { sort: { order: 1 } }).exec();
+  var d = new Date();
+  var n = d.getMonth();
+  var currentSemester = n > 8 ? 'ganjil' : 'genap'
+  var courseList = await Course.find({semester:currentSemester, status:1}, {}, { sort: { order: 1 } }).exec();
   return res.render('course/studentlist', { courses: courseList, title: 'My Courses' });
 }
 
@@ -105,6 +107,10 @@ exports.index = async (req, res) => {
   if (req.user.role == 'student')
     return res.redirect('/studentcourses');
 
+  var d = new Date();
+  var n = d.getMonth();
+  var currentSemester = n > 8 ? 'ganjil' : 'genap'
+  // var courseList = await Course.find({semester:currentSemester, status:1}, {}, { sort: { order: 1 } }).exec();
   var courseList = await Course.find({}, {}, { sort: { order: 1 } }).exec();
   // console.log(exerciseList);
   //   function(err, exerciseList) {
@@ -282,6 +288,30 @@ exports.deleteById = (req, res) => {
   
 
   Course.findByIdAndRemove(req.params.courseId, function (err, doc) {
+    if (err);
+
+    return res.redirect('/course');
+
+  });
+}
+
+exports.archieved = (req, res) => {
+  if (!(req.user.role === 'teacher' || req.user.role === 'admin'))
+    return res.status(401).json({ code: 401, error: 'Wrong privilege' });
+
+  Course.findByIdAndUpdate(req.params.courseId, { status: 0 }, function (err, doc) {
+    if (err);
+
+    return res.redirect('/course');
+
+  });
+}
+
+exports.publish = (req, res) => {
+  if (!(req.user.role === 'teacher' || req.user.role === 'admin'))
+    return res.status(401).json({ code: 401, error: 'Wrong privilege' });
+
+  Course.findByIdAndUpdate(req.params.courseId, { status: 1 }, function (err, doc) {
     if (err);
 
     return res.redirect('/course');
