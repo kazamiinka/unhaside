@@ -101,16 +101,27 @@ append end-script
     }
 
     $('#bt-new').click(function() {
+        var d = new Date();
+        var n = d.getMonth();
+        var currentSemester = n > 8 ? 'ganjil' : 'genap'
+
         var semesterValue = 'genap'
         //- $(".modal-add-course").find('#js-semester').on('change', function() {
         if ($(".modal-add-course").find('#js-semester').is(':checked')) {
             semesterValue = 'ganjil'
         }
+
+        var statusValue = 0
+        if(currentSemester === semesterValue){
+          statusValue = 1
+        }
+      
+
         var newCourse = {
             title: $(this).closest('.modal-add-course').find('#title').val(),
             author : '#{user._id}',
             order: 100,
-            status:0,
+            status: statusValue,
             semester : semesterValue
         };
         fetch('/course', {
