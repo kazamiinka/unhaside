@@ -272,6 +272,15 @@ exports.deleteById = (req, res) => {
   if (!(req.user.role === 'teacher' || req.user.role === 'admin'))
     return res.status(401).json({ code: 401, error: 'Wrong privilege' });
 
+  /*Delete all customers where the address starts with an "O":*/
+  var myquery = { courseId: req.params.courseId };
+  Class.deleteMany(myquery, function(err, obj) {
+    if (err) throw err;
+    console.log(" document(s) deleted");
+    // db.close();
+  });
+  
+
   Course.findByIdAndRemove(req.params.courseId, function (err, doc) {
     if (err);
 

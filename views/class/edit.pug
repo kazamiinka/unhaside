@@ -117,13 +117,14 @@ block content
                           )
                         a.title(href='/exercise/'+el._id)= el.title
                       .deadline
-                        input.input-md.textinput.textInput.form-control.deadline(
-                          type='text'
+                        input.input-md.form-control.deadline(
+                          type='date'
                           data-id=el._id
                           data-deadline=el.deadline
                           value=el.deadline
                           name="date"
                         )
+                        p=el.deadline
                     .col-xs-12.col-sm-8
                       div(class='instruction '+((el.testcode|| '').trim().length ? 'test-code': 'no-test-code'))!= el.instruction     
             //-     each el in exercises
@@ -231,14 +232,12 @@ block content
       //- button#bt-update.col-sm-3.btn.btn-primary
         i.fa.fa-save
         | Update
-  script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js')
-  link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css')
 
 append end-script
   script.
    
     //- $('#datepicker').datepicker()
-    
+    //- console.log(moment/)
     $('#exercises input.in-class').change(function(e) {
       if (!this.checked) {
         $(this).parents('tr').find('input.displayed').prop('checked', false);
@@ -261,7 +260,7 @@ append end-script
           var exObj = {
             exId: el.dataset.id,
             active: el.querySelector('input.in-class[type=checkbox]').checked,
-            deadline: new Date(el.querySelector('input.deadline[type=text]').value)
+            deadline: new Date(el.querySelector('input.deadline[type=date]').value)
           };
           if (exObj.active && !(exObj.deadline > 0))
             exObj.deadline = new Date(parseInt(Date.now()/86400000 + 365)*86400000); // one year from now

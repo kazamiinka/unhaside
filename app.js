@@ -2,6 +2,8 @@
  * Module dependencies.
  */
 const express = require('express');
+var moment = require('moment');
+// app.locals.moment = require('moment');
 const compression = require('compression');
 const session = require('express-session');
 const bodyParser = require('body-parser');
