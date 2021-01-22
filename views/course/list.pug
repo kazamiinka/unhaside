@@ -99,11 +99,19 @@ append end-script
          window.location.href = '/course/delete/' + id;
       }
     }
+
     $('#bt-new').click(function() {
+        var semesterValue = 'genap'
+        //- $(".modal-add-course").find('#js-semester').on('change', function() {
+        if ($(".modal-add-course").find('#js-semester').is(':checked')) {
+            semesterValue = 'ganjil'
+        }
         var newCourse = {
             title: $(this).closest('.modal-add-course').find('#title').val(),
             author : '#{user._id}',
-            order: 100
+            order: 100,
+            status:0,
+            semester : semesterValue
         };
         fetch('/course', {
             method: 'POST', // or 'PUT'
