@@ -218,6 +218,7 @@ app.post('/course/exercise/:courseId', passportConfig.isAuthenticated, courseCon
 
 //classes
 app.get('/course/class/:courseId', passportConfig.isAuthenticated, classController.index2);
+app.get('/course/:courseId/classByCourse', passportConfig.isAuthenticated, classController.getAllClassCourse);
 
 //module
 app.get('/course/:courseId/:moduleId', passportConfig.isAuthenticated, courseController.getModuleById);

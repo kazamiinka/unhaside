@@ -193,11 +193,25 @@ exports.getById = async (req, res) => {
   var classes = classList;
   var exercises = exerciseList;
   var quis = quisList;
+  var currentDate = new Date()
+  var currentYear = currentDate.getFullYear()
+  var lastTeenYear = currentYear - 10
+  var listYear = []
+  for(i=lastTeenYear;i<=currentYear+10; i++){
+    listYear.push(i+1)
+  }
+
+  var d = new Date();
+  var n = d.getMonth();
+  var currentSemester = n > 8 ? 'ganjil' : 'genap'
+
+  var classBySemesterandYear = await Class.find({$and: [{semester: currentSemester}, {tahun: currentYear}]}, {}, { sort: { order: 1 } }).exec();
+
 
   try {
     var thisCourse = await Course.findById(req.params.courseId).exec();
     var author = await User.findById(thisCourse.author).exec();
-    return res.render('course/edit', { forum:thisForum,title: thisCourse.title, ex: thisCourse, teachers, modules, idCourse: req.params.courseId, author: author.profile.name, classes, exercises, quis });
+    return res.render('course/edit', { forum:thisForum,title: thisCourse.title, ex: thisCourse, teachers, modules, idCourse: req.params.courseId, author: author.profile.name, classes, exercises, quis, listYear:listYear, currentYear:currentYear, classBySemesterandYear:classBySemesterandYear });
   } catch (err) {
     console.log(thisCourse);
     res.status(500);

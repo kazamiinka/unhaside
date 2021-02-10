@@ -32,6 +32,8 @@ const classSchema = new mongoose.Schema({
     // displayedExercises: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Exercise' }],
     students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     exercises: [{type: subdocSchema}],
+    semester: String,
+    tahun:Number
 }, { timestamps: true });
 
 const Class = mongoose.model('Class', classSchema);

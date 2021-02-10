@@ -1,0 +1,77 @@
+extends ../layout
+
+block content
+
+  .container
+    .page-header
+      h3 #{title}'s Courses
+      h5 Created by #{author}
+      h5
+        a.badge.badge-yellow(href='/course/livecourses/'+ idCourse,style="margin-right:5px;") Live Class
+      
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item(aria-current="page")
+          a(href="/course")
+            | All Courses
+        li.breadcrumb-item(aria-current="page")
+          a(href="/course/"+courseId)
+           | #{title}'s Course
+        li.breadcrumb-item.active(aria-current="page")
+           | All Course
+
+ 
+  .container
+    .page-header
+      h3 Class List
+      
+    ul.list-group
+      each c in classes
+        li.list-group-item(style="height:50px")
+          // i.fa.fa-circle
+          a.nounderline(href='/course/'+c.courseId+'/class/' + c.id) #{c.classId}&nbsp
+            span.pull-right
+              a.pull-right.btn.btn-sm.btn-primary(style="margin-right:5px; border-radius:20px") 
+                 | Live Clas 
+                 span.fa.fa-video-camera 
+              if (user.role == 'teacher' || user.role == 'assistant' || user.role == 'admin')
+               a.pull-right.btn.btn-sm.btn-primary(href='/classlog/' + c.id,style="margin-right:5px; border-radius:20px")  
+                 | Stats 
+                 span.fa.fa-bar-chart
+              if (user.role == 'teacher'|| user.role == 'admin')
+                a.pull-right.btn.btn-sm.btn-primary(style="margin-right:5px; border-radius:20px", href='/class-staff/' + c.id)  
+                 | Staff 
+                 span.fa.fa-user
+                a.pull-right.btn.btn-sm.btn-danger(href='#',style="margin-right:5px; margin-bottom:5px; border-radius:20px", onclick='deleteId(\'' + c.id + '\')') 
+                 | Delete  
+                 span.fa.fa-trash      
+
+
+
+
+append end-script
+  script.
+    function deleteId(id){
+      var r = confirm("Are you sure to delete class ?");
+      if(r==true){
+         window.location.href = '/class/delete/' + id;
+      }
+    }
+    $('#bt-new').click(function() {
+        var newClass = {
+            classId: $('#classId').val(),
+            courseId: '#{courseId}'
+        };
+        fetch('/class', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newClass),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => console.log('Success:', response)); 
+        
+    })

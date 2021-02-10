@@ -141,6 +141,15 @@ exports.getById = async (req, res) => {
     // }
 }
 
+exports.getAllClassCourse = async (req, res) => {
+
+  var classes = await Class.find({courseId: req.params.courseId}).exec();
+  var thisCourse = await Course.findById(req.params.courseId).exec();
+  
+  return res.render('class/allClass', {title: thisCourse.title, classes: classes, courseId : req.params.courseId});
+
+}
+
 exports.logIndex = (req, res) => {
   if (req.user.role == 'student')
     return res.redirect('/student');
