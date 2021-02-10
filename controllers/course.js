@@ -111,7 +111,7 @@ exports.index = async (req, res) => {
   var n = d.getMonth();
   var currentSemester = n > 8 ? 'ganjil' : 'genap'
   // var courseList = await Course.find({semester:currentSemester, status:1}, {}, { sort: { order: 1 } }).exec();
-  var courseList = await Course.find({}, {}, { sort: { order: 1 } }).exec();
+  var courseList = await Course.find({}, {}, { sort: { status: -1 } }).exec();
   // console.log(exerciseList);
   //   function(err, exerciseList) {
   return res.render('course/list', { courses: courseList, title: 'Course List' });
