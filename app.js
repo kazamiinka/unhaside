@@ -171,6 +171,8 @@ app.get('/course/:courseId/class/:classId', passportConfig.isAuthenticated, clas
 app.put('/class/:classId', passportConfig.isAuthenticated, classController.updateById);
 app.get('/class/delete/:classId', passportConfig.isAuthenticated, classController.deleteById);
 app.get('/classedit/:classId', passportConfig.isAuthenticated, classController.editById);
+app.get('/class/publish/:classId', passportConfig.isAuthenticated, classController.publish);
+app.get('/class/archived/:classId', passportConfig.isAuthenticated, classController.archived);
 
 app.get('/classlog', passportConfig.isAuthenticated, classController.logIndex);
 app.get('/classlog/:classId', passportConfig.isAuthenticated, classController.getLogsById);

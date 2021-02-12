@@ -44,7 +44,15 @@ block content
                  span.fa.fa-user
                 a.pull-right.btn.btn-sm.btn-danger(href='#',style="margin-right:5px; margin-bottom:5px; border-radius:20px", onclick='deleteId(\'' + c.id + '\')') 
                  | Delete  
-                 span.fa.fa-trash      
+                 span.fa.fa-trash 
+                if (c.status == 0)
+                  a.pull-right.btn.btn-sm.btn-success(href='#',style="margin-right:5px; border-radius:20px", onclick='publish(\'' + c.id + '\')') 
+                   | Publish  
+                   span.fa.fa-arrow-up  
+                else 
+                  a.pull-right.btn.btn-sm.btn-info(href='#',style="margin-right:5px; border-radius:20px", onclick='archived(\'' + c.id + '\')') 
+                   | Archieved  
+                   span.fa.fa-arrow-down  
 
 
 
@@ -57,6 +65,21 @@ append end-script
          window.location.href = '/class/delete/' + id;
       }
     }
+
+    function publish(id){
+      var r = confirm("Are you sure to publish class ?");
+      if(r==true){
+         window.location.href = '/class/publish/' + id;
+      }
+    }
+
+    function archived(id){
+      var r = confirm("Are you sure to archived class ?");
+      if(r==true){
+         window.location.href = '/class/archived/' + id;
+      }
+    }
+
     $('#bt-new').click(function() {
         var newClass = {
             classId: $('#classId').val(),

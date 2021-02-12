@@ -88,9 +88,19 @@ block content
                         //-   i.fa.fa-trash(style='color: red')
                         a.pull-right.btn.btn-sm.btn-danger(href='#' + c.id, style="margin-left:1%; border-radius:20px" onclick='deleteIdClass(\'' + c.id + '\')') 
                           | Delete  
-                          span.fa.fa-trash   
-            a.nounderline(href='/course/'+ex.id+'/classByCourse/') 
-              button.btn.btn-info(type='button') View All Class
+                          span.fa.fa-trash
+                        //- if (c.status == 0)
+                        //-   a.pull-right.btn.btn-sm.btn-success(href='#',style="margin-right:5px; border-radius:20px", onclick='publish(\'' + c.id + '\')') 
+                        //-    | Publish  
+                        //-    span.fa.fa-arrow-up  
+                        //- else 
+                        //-   a.pull-right.btn.btn-sm.btn-info(href='#',style="margin-right:5px; border-radius:20px", onclick='archived(\'' + c.id + '\')') 
+                        //-    | Archieved  
+                        //-    span.fa.fa-arrow-down    
+            if (user.role == 'teacher')
+                a.nounderline(href='/course/'+ex.id+'/classByCourse/') 
+                  button.btn.btn-info(type='button') View All Class
+        
 
       .card
         #headingFour.card-header
@@ -323,10 +333,11 @@ append end-script
         }
         var tahun = $("#classId").closest('.form-group').find('#semester').val()
         var newClass = {
-            classId: $('#classId').val() + " " + semesterValue + " " + tahun ,
+            classId: $('#classId').val() + " (Semester " + semesterValue + " Tahun " + tahun + ")",
             courseId : '#{ex._id}',
             tahun: tahun,
-            semester:semesterValue
+            semester:semesterValue,
+            status:0
         };
         fetch('/class', {
             method: 'POST', // or 'PUT'
@@ -341,6 +352,22 @@ append end-script
         .then(response => console.log('Success:', response)); 
         
     })   
+
+
+
+    //- function publish(id){
+    //-   var r = confirm("Are you sure to publish class ?");
+    //-   if(r==true){
+    //-      window.location.href = '/class/publish/' + id;
+    //-   }
+    //- }
+
+    //- function archived(id){
+    //-   var r = confirm("Are you sure to archived class ?");
+    //-   if(r==true){
+    //-      window.location.href = '/class/archived/' + id;
+    //-   }
+    //- }
 
     function deleteIdExercise(id){
       var r = confirm("Are you sure want to delete this exercise?");

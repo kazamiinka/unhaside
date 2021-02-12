@@ -205,7 +205,7 @@ exports.getById = async (req, res) => {
   var n = d.getMonth();
   var currentSemester = n > 8 ? 'ganjil' : 'genap'
 
-  var classBySemesterandYear = await Class.find({$and: [{courseId: req.params.courseId},{semester: currentSemester},{tahun: currentYear}]}, {}, { sort: { order: 1 } }).exec();
+  var classBySemesterandYear = await Class.find({$and: [{courseId: req.params.courseId}, {status:1}]}, {}, { sort: { order: 1 } }).exec();
 
 
   try {

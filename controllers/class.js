@@ -143,11 +143,39 @@ exports.getById = async (req, res) => {
 
 exports.getAllClassCourse = async (req, res) => {
 
+  if (req.user.role != 'teacher')
+    return res.redirect('/');
+  
   var classes = await Class.find({courseId: req.params.courseId}).exec();
   var thisCourse = await Course.findById(req.params.courseId).exec();
   
   return res.render('class/allClass', {title: thisCourse.title, classes: classes, courseId : req.params.courseId});
 
+}
+
+exports.publish = (req, res) => {
+  if (!(req.user.role === 'teacher' || req.user.role === 'admin'))
+    return res.status(401).json({ code: 401, error: 'Wrong privilege' });
+
+  // var classData = Class.findById(req.params.classId)
+  Class.findByIdAndUpdate(req.params.classId, { status: 1 }, function (err, doc) {
+    if (err);
+      
+    return res.redirect('/course/'+doc.courseId);
+
+  });
+}
+
+exports.archived = (req, res) => {
+  if (!(req.user.role === 'teacher' || req.user.role === 'admin'))
+    return res.status(401).json({ code: 401, error: 'Wrong privilege' });
+
+  Class.findByIdAndUpdate(req.params.classId, { status: 0 }, function (err, doc) {
+    if (err);
+
+    return res.redirect('/course/'+doc.courseId);
+
+  });
 }
 
 exports.logIndex = (req, res) => {

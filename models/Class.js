@@ -33,7 +33,8 @@ const classSchema = new mongoose.Schema({
     students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     exercises: [{type: subdocSchema}],
     semester: String,
-    tahun:Number
+    tahun:Number,
+    status:Boolean
 }, { timestamps: true });
 
 const Class = mongoose.model('Class', classSchema);
