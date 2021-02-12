@@ -12,6 +12,22 @@ append page-style
 block content
     .container
         .page-header
+            .alert.alert-success.alert-dismissible(role='alert')
+                button.close(type='button' onclick='this.parentNode.parentNode.removeChild(this.parentNode);' data-dismiss='alert')
+                    span(aria-hidden='true') &times;
+                    span.sr-only Close
+                strong
+                    center
+                        i.fa.fa-warning
+                        |  Info!
+                //- marquee
+                hr
+                p(style='font-family: Impact; font-size: 12pt')
+                | Spell IDE's Survey ! 
+                a(href='https://docs.google.com/forms/d/e/1FAIpQLSdPMIrk-GgOh3ipR1_X3uEkn2PHGec1eju0kf6XzjL_DA44Dg/viewform')
+                    | click here.
+                |        We are collecting your edit and run data for the instructors dashboard. We may use the anonymized data for later research and analytics.                  
+            
             if inClass
                 if exerciseGroups
                     h3 Exercise List
@@ -59,33 +75,59 @@ block content
         //-             li(role='presentation')
         //-                 a(href='#'+group.id)= group.id
 
+        //- .card-columns
+        //-     .card.bg-primary
+        //-         .card-body.text-center
+        //-             p.card-text Some text inside the first card
+        //-     .card.bg-warning
+        //-         .card-body.text-center
+        //-             p.card-text Some text inside the second card
+        //-     .card.bg-success
+        //-         .card-body.text-center
+        //-             p.card-text Some text inside the third card
+        //-     .card.bg-danger
+        //-         .card-body.text-center
+        //-             p.card-text Some text inside the fourth card
+        //-     .card.bg-light
+        //-         .card-body.text-center
+        //-             p.card-text Some text inside the fifth card
+        //-     .card.bg-info
+        //-         .card-body.text-center
+        //-             p.card-text Some text inside the sixth card
+
         if exercise
             each exer in exercise
-                a(href='/work/exercise/'+exer._id)= exer.title
+                a(href='/work/exercise/'+exer._id)= exer.title 
+                p ada exercise
+        //- if exerciseGroups
+        //-     .card-group
+        //-         each group in exerciseGroups
+        //-             .card(id=group.id)
+        //-                 each ex, idx in group.exercises
+        //-                     .card-header
+        //-                         | Card 1
+        //-                     .card-body
+        //-                         .exercise-title(data-id=ex._id, data-deadline=ex.deadline)
+        //-                             a(href='/work/exercise/'+ex._id)= ex.title
+        //-                         span.deadline.badge.badge-primary.badge-pill(style="float:right;background-color:red")
+        //-                             |
+        //-                         div.exercise-text!= ex.instruction
         if exerciseGroups
-            each group in exerciseGroups
-                .exercise-group(id=group.id)
-                    each ex, idx in group.exercises
-                        .exercise-title(data-id=ex._id, data-deadline=ex.deadline)
-                            a(href='/work/exercise/'+ex._id)= ex.title
-                            span.deadline.badge.badge-primary.badge-pill(style="float:right;background-color:red")
-                                |
-                        div.exercise-text!= ex.instruction
+            .card-columns
+                each group in exerciseGroups
+                        .card.bg-primary
+                            .exercise-group(id=group.id)
+                                each ex, idx in group.exercises
+                                    .card-header
+                                        .exercise-title(data-id=ex._id, data-deadline=ex.deadline, style="padding-bottom:5%")
+                                            p(style="color:black")=group.courseTitle
+                                            hr
+                                            a(href='/work/exercise/'+ex._id)= ex.title
+                                            span.deadline.badge.badge-primary.badge-pill(style="float:right;background-color:red;")
+                                                |
+                                        div.exercise-text!= ex.instruction
             br
-            .card
-                .alert.alert-danger.alert-dismissible(role='alert')
-                    button.close(type='button' onclick='this.parentNode.parentNode.removeChild(this.parentNode);' data-dismiss='alert')
-                        span(aria-hidden='true') &times;
-                        span.sr-only Close
-                    strong
-                        i.fa.fa-warning
-                        |  Info!
-                    marquee
-                        p(style='font-family: Impact; font-size: 12pt')
-                        | Spell IDE's Survey ! 
-                        a(href='https://docs.google.com/forms/d/e/1FAIpQLSdPMIrk-GgOh3ipR1_X3uEkn2PHGec1eju0kf6XzjL_DA44Dg/viewform')
-                            | click here.
-                        |        We are collecting your edit and run data for the instructors dashboard. We may use the anonymized data for later research and analytics.                  
+            //- .card
             
 append end-script
     script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.js')

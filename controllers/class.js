@@ -61,7 +61,7 @@ exports.getById = async (req, res) => {
   
    const [classData, exerciseData, userData, courseData] = await Promise.all([
      Class.findById(req.params.classId).exec(),
-     Exercise.find({}).sort('title').exec(),
+     Exercise.find({courseId:req.params.courseId}).sort('title').exec(),
      User.find({}).sort('email').exec(),
      Course.findById(req.params.courseId).exec()
     ]);

@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Class = require('../models/Class');
 const Exercise = require('../models/Exercise');
 const Work = require('../models/Work');
+const Course = require('../models/Course');
 
 /**
  * GET /
@@ -66,14 +67,19 @@ exports.updateById = (req, res, next) => {
 };
 
 exports.indexByStudent = async (req, res, next) => {
+  // console.log(req.user.id)
   if (req.user && req.user.role === 'student') {
     try {
       const [workData, classData] = await Promise.all([
         Work.find({student: req.user._id}).exec(),
         Class.findOne({students:{$all: [req.user._id]}})
-          .populate('exercises.exId').exec()
+          .populate('exercises.exId').populate('courseId').exec()
       ]);
+      // console.log("class " + classData)
+      // console.log("class exercise  " + classData.exercises)
+      // console.log(classData)
       const exerciseData = classData.exercises.filter((e) => e.active).map((e)=> {e.exId.deadline = e.deadline; return e.exId; }).sort((l,r) => l.title.localeCompare(r.title));
+      // const coursesData = classData.map((e) => { return e.courseId; });
       // exerciseData.forEach((e) => {
       //   workData.filter((w) => w.exercise == e._id).sort((w) => w.updatedAt).reverse()[0]
       // });
@@ -81,11 +87,13 @@ exports.indexByStudent = async (req, res, next) => {
 
       const splitTitleFunction = (ex1, ex2) => { return ex1.split('-')[0] != ex2.split('-')[0];}; // exercise title must follow exDD-DD format
 
-      // console.log(exerciseData);
+      // console.log(coursesData);
 
       const exerciseGroups = exerciseData.reduce((acc, cur, idx, arr) => {
+        // console.log(cur)
+        // console.log(coursesData)
         if (idx == 0 || splitTitleFunction(cur.title, arr[idx-1].title)) {
-          acc.push({id: cur.title.split('-')[0], exercises:[cur]});
+          acc.push({id: cur.title.split('-')[0], exercises:[cur], courseTitle: classData.courseId.title});
         }
         else {
           acc[acc.length-1].exercises.push(cur);
@@ -96,6 +104,7 @@ exports.indexByStudent = async (req, res, next) => {
 
       var thisExercise = await Exercise.find({courseId: req.user._id},{},{ sort: { createdAt: -1 } }).exec();
       // console.log('exerciseGroup', exerciseGroups);
+
 
       return res.render('exercise/studentlist', {title: 'Exercises', exerciseGroups, inClass: true, exercise:thisExercise});
   }
