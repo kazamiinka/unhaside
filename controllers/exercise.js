@@ -72,41 +72,48 @@ exports.indexByStudent = async (req, res, next) => {
     try {
       const [workData, classData] = await Promise.all([
         Work.find({student: req.user._id}).exec(),
-        Class.findOne({students:{$all: [req.user._id]}})
+        Class.find({students:{$all: [req.user._id]}})
           .populate('exercises.exId').populate('courseId').exec()
       ]);
+
+      // console.log(req.user._id)
+      console.log(classData)
       // console.log("class " + classData)
       // console.log("class exercise  " + classData.exercises)
       // console.log(classData)
-      const exerciseData = classData.exercises.filter((e) => e.active).map((e)=> {e.exId.deadline = e.deadline; return e.exId; }).sort((l,r) => l.title.localeCompare(r.title));
+      // const exerciseData = classData.exercises.filter((e) => e.active).map((e)=> {e.exId.deadline = e.deadline; return e.exId; }).sort((l,r) => l.title.localeCompare(r.title));
       // const coursesData = classData.map((e) => { return e.courseId; });
       // exerciseData.forEach((e) => {
       //   workData.filter((w) => w.exercise == e._id).sort((w) => w.updatedAt).reverse()[0]
       // });
 
 
-      const splitTitleFunction = (ex1, ex2) => { return ex1.split('-')[0] != ex2.split('-')[0];}; // exercise title must follow exDD-DD format
+      // const splitTitleFunction = (ex1, ex2) => { return ex1.split('-')[0] != ex2.split('-')[0];}; // exercise title must follow exDD-DD format
 
       // console.log(coursesData);
 
-      const exerciseGroups = exerciseData.reduce((acc, cur, idx, arr) => {
+      // const exerciseGroups = exerciseData.reduce((acc, cur, idx, arr) => {
         // console.log(cur)
         // console.log(coursesData)
-        if (idx == 0 || splitTitleFunction(cur.title, arr[idx-1].title)) {
-          acc.push({id: cur.title.split('-')[0], exercises:[cur], courseTitle: classData.courseId.title});
-        }
-        else {
-          acc[acc.length-1].exercises.push(cur);
-        }
+        // if (idx == 0 || splitTitleFunction(cur.title, arr[idx-1].title)) {
+        //   acc.push({id: cur.title.split('-')[0], exercises:[cur], courseTitle: classData.courseId.title});
+        // }
+        // else {
+        //   acc[acc.length-1].exercises.push(cur);
+        // }
         // console.log('splitE', idx, cur.title, idx ? arr[idx-1].title: null, acc);
-        return acc;
-      }, []);
+      //   return acc;
+      // }, []);
 
       var thisExercise = await Exercise.find({courseId: req.user._id},{},{ sort: { createdAt: -1 } }).exec();
       // console.log('exerciseGroup', exerciseGroups);
+      var ex = classData.map((e)=> {return e.exercises})
+      var eex = ex.map((e)=>{return e})
 
 
-      return res.render('exercise/studentlist', {title: 'Exercises', exerciseGroups, inClass: true, exercise:thisExercise});
+
+
+      return res.render('exercise/studentlist', {title: 'Exercises', inClass: true, exercise:classData});
   }
   catch(e) {
     console.log('err', e);

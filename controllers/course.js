@@ -24,7 +24,7 @@ exports.indexByStudent = async (req, res) => {
   var n = d.getMonth();
   var currentSemester = n > 8 ? 'ganjil' : 'genap'
   var courseList = await Course.find({$or: [{semester: currentSemester}, {status: 1}]}, {}, { sort: { order: 1 } }).exec();
-  return res.render('course/studentlist', { courses: courseList, title: 'My Courses' });
+  return res.render('course/studentlist', { courses: coursesData, title: 'My Courses' });
 }
 
 exports.getByStudent = async (req, res) => {
