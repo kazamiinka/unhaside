@@ -17,6 +17,7 @@ const quisSchema = new mongoose.Schema({
             id_answer:String
         }],
     }],
+    status: Boolean,
     html: String,
     js: String,
     css: String,
