@@ -194,3 +194,28 @@ exports.deleteQuisById = (req, res) => {
 exports.submitQuisByStudent = (req, res) => {
 
 }
+
+exports.publish = (req, res) => {
+  if (!(req.user.role === 'teacher' || req.user.role === 'admin'))
+    return res.status(401).json({ code: 401, error: 'Wrong privilege' });
+
+  // var classData = Class.findById(req.params.classId)
+  Quis.findByIdAndUpdate(req.params.quisId, { status: 1 }, function (err, doc) {
+    if (err);
+      
+    return res.redirect('/course/'+doc.courseId);
+
+  });
+}
+
+exports.archived = (req, res) => {
+  if (!(req.user.role === 'teacher' || req.user.role === 'admin'))
+    return res.status(401).json({ code: 401, error: 'Wrong privilege' });
+  
+  Quis.findByIdAndUpdate(req.params.quisId, { status: 0 }, function (err, doc) {
+    if (err);
+
+    return res.redirect('/course/'+doc.courseId);
+
+  });
+}

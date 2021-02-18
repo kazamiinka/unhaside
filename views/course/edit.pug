@@ -153,14 +153,19 @@ block content
               if(quis == 0)
                 p Data not exist
               each c in quis
-                li.list-group-item
+                li.list-group-item(style="padding-bottom:2%")
                   // i.fa.fa-circle
                   a.nounderline(href='/quis/'+ ex._id +'/' + c._id) #{c.title}
-                  //- if (user.role == 'teacher' || user.role == 'admin' || user.role == 'assistant')
-                  //-   span.pull-right        
-                  //-     a(href='#',style="margin-right:5px;", onclick='deleteIdQuis(\'' + c._id + '\')') 
-                  //-       i.fa.fa-trash(style='color: red') 
-        
+                  span.pull-right        
+                    if (c.status == 0)
+                        a.pull-right.btn.btn-sm.btn-success(href='#',style="margin-right:5px; border-radius:20px", onclick='publish(\'' + c.id + '\')') 
+                          | Publish  
+                          span.fa.fa-arrow-up  
+                    else 
+                        a.pull-right.btn.btn-sm.btn-info(href='#',style="margin-right:5px; border-radius:20px", onclick='archived(\'' + c.id + '\')') 
+                          | Archieved  
+                          span.fa.fa-arrow-down  
+                  
       .card
         #headingFour.card-header
           h5.mb-0.col-md-9
@@ -373,6 +378,20 @@ append end-script
       var r = confirm("Are you sure want to delete this exercise?");
       if(r==true){
          window.location.href = '/course/exercise/delete/#{ex._id}/' + id;
+      }
+    }
+
+    function publish(id){
+      var r = confirm("Are you sure to publish class ?");
+      if(r==true){
+         window.location.href = '/quis/publish/' + id;
+      }
+    }
+
+    function archived(id){
+      var r = confirm("Are you sure to archived class ?");
+      if(r==true){
+         window.location.href = '/quis/archived/' + id;
       }
     }
 

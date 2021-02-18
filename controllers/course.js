@@ -44,7 +44,7 @@ exports.previewModuleById = async (req, res) => {
   var thisCourse = await Course.findById(req.params.courseId).exec();
   var thisModules = await Module.findById(req.params.moduleId).exec();
   var Modules = await Module.find({ courseId: req.params.courseId }).exec();
-  var Quises = await Quis.find({ courseId: thisCourse.id }).exec();
+  var Quises = await Quis.find({ courseId: thisCourse.id , status:1}).exec();
   var QuisesStudent = await QuisStudent.find({studentId:req.user.id}).exec();
   var isAlreadyAnswer = QuisesStudent.length > 0
   var thisDiscussion = await Discussion.find({moduleId : req.moduleId}).exec();

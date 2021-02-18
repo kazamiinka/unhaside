@@ -188,6 +188,8 @@ app.post('/exercise', passportConfig.isAuthenticated, exerciseController.create)
 
 
 app.get('/quis', passportConfig.isAuthenticated, quisController.index);
+app.get('/quis/publish/:quisId', passportConfig.isAuthenticated, quisController.publish);
+app.get('/quis/archived/:quisId', passportConfig.isAuthenticated, quisController.archived);
 app.get('/exercise/:exerciseId', passportConfig.isAuthenticated, exerciseController.getById);
 app.put('/exercise/:exerciseId', passportConfig.isAuthenticated, exerciseController.updateById);
 // app.get('/exercise/:exerciseId', passportConfig.isAuthenticated, exerciseController.getExercise);

@@ -177,7 +177,7 @@ append end-script
                
                 var this_option_answer = $(this)
                 var isAnswerVal = this_option_answer.closest('.form-group').find('#isAnswer').val()
-                console.log(this_option_answer.find('#questionAnswer').val())
+                //- console.log(this_option_answer.find('#questionAnswer').val())
                 var $key = 0
                 if(isAnswerVal == 1){
                     $key = 1
@@ -228,6 +228,7 @@ append end-script
             title : $('#quisTitle').val(),
             courseId : '#{ex._id}',
             question : questionJsonData,
+            status : 0
         };
         fetch('/quis', {
             method: 'POST', // or 'PUT'
