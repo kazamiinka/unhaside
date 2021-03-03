@@ -20,9 +20,22 @@ const passport = require('passport');
 const expressValidator = require('express-validator');
 // const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
+// const upload = require('express-fileupload');
 const multer = require('multer');
 
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
+//set storage engine
+const storage = multer.diskStorage({
+  destination: './new/',
+  filename: function(req, file, cb){
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+//init upload
+const upload = multer({
+  storage : storage
+}).single('myImage');
+
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -214,7 +227,7 @@ app.get('/course/publish/:courseId', passportConfig.isAuthenticated, courseContr
 app.get('/course/preview/:courseId', passportConfig.isAuthenticated, courseController.previewModuleById);
 app.get('/course/preview/:courseId/:moduleId', passportConfig.isAuthenticated, courseController.previewModuleById2);
 app.get('/course/preview/:courseId/:moduleId/:idSuccess', passportConfig.isAuthenticated, courseController.previewModuleById2);
-app.post('/course',  passportConfig.isAuthenticated, courseController.create);
+app.post('/course',passportConfig.isAuthenticated, courseController.create);
 app.post('/course/:courseId', passportConfig.isAuthenticated, courseController.createModule);
 
 app.get('/course/exercise/:courseId', passportConfig.isAuthenticated, courseController.getExerciseByCourse);
@@ -253,6 +266,7 @@ app.post('/testlog', passportConfig.isAuthenticated, testlogController.create);
 
 app.get('/discussion/:courseId/:moduleId', passportConfig.isAuthenticated, discussionController.getDiscussionByModule);
 app.get('/quis/student/:courseId/:quisId', passportConfig.isAuthenticated, quisController.getQuisStudentById);
+app.get('/course/:courseId/quis/viewResult/:quisId', passportConfig.isAuthenticated, quisController.getAllQuisResult)
 app.get('/course/:courseId/forum/add', passportConfig.isAuthenticated, discussionController.add);
 app.get('/course/quis/delete/:courseId/:quisId',passportConfig.isAuthenticated, quisController.deleteQuisById)
 app.post('/forum',  passportConfig.isAuthenticated, discussionController.createForum);
@@ -260,6 +274,31 @@ app.post('/quis/student',  passportConfig.isAuthenticated, quisStudentController
 app.get('/course/:courseId/forum/:forumId', passportConfig.isAuthenticated, discussionController.getForumById);
 app.post('/forum/discussion', passportConfig.isAuthenticated, discussionController.create);
 app.post('/discussion', passportConfig.isAuthenticated, discussionController.create);
+app.post('/upload/course/:courseId', passportConfig.isAuthenticated, courseController.upload);
+app.get('/quis.xlsx', function (req, res) {
+  res.sendFile(__dirname + '/' + "outputFiles" + '/' + "exel-from-js.xlsx");
+});
+
+// app.use(express.static(__dirname + '/public'));
+app.use(express.static('public'));
+
+// app.post('/upload/course/:courseId', (req, res) => {
+//   upload(req,res, (err) => {
+//     if(err){
+//       res.render('/course/edit', {
+//         msg: err
+//       })
+//     } else {
+//       console.log(req.file);
+//       console.log(req.params.courseId);
+//       // Course.findByIdAndUpdate(req.params.courseId, { status: 1 }, function (err, doc) {
+//       //   if (err);
+//       // })
+//       res.send("test");
+//     }
+//   })
+// })
+
 /*
 *
  * API examples routes.

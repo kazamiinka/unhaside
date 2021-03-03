@@ -118,7 +118,7 @@ append end-script
         //- formData.append('avatar', document.getElementById('avatar').files[0]) 
 
         //- var files = $(this).closest('.modal-add-course').find('#js-image')[0].files;
-        var files = $(this).closest('.modal-add-course').find('#js-image').get(0).files,
+        //- var files = $(this).closest('.modal-add-course').find('#js-image').get(0).files,
         formData = new FormData();
 
         var newCourse = {
@@ -126,8 +126,7 @@ append end-script
             author : '#{user._id}',
             order: 100,
             status: statusValue,
-            semester : semesterValue,
-            image: files
+            semester : semesterValue
         };
         fetch('/course', {
             method: 'POST', // or 'PUT'
