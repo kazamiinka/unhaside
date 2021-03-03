@@ -8,6 +8,76 @@ const Quis = require('../models/Quis');
 const QuisStudent = require('../models/QuisStudent');
 const Discussion = require('../models/Discussion');
 const Forum = require('../models/Forum');
+const formidable = require('formidable');
+const multer = require('multer');
+const path = require('path');
+var url = require('url') ;
+
+const storage = multer.diskStorage({
+  destination: 'public/image/',
+  filename: function(req, file, cb){
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+//init upload
+const upload = multer({
+  storage : storage,
+  limits:{filesize: 1000000},
+  filefilter:function(req,file,cb){
+    checkFileType(file, cb)
+  }
+}).single('myImage');
+
+function checkFileType(file, cb){
+  const filetypes = /jpeg|jpg|png|gif/
+  const extname = filetypes.test(path.extname(file.originalname).toLocaleLowerCase());
+  const mimetype = filetypes.test(file.mimetype)
+
+  if(mimetype && extname){
+    return cb(null,true)
+  } else {
+    cb('Error : image only')
+  }
+}
+
+exports.upload = async (req, res) => {
+  upload(req,res, (err) => {
+    if(err){
+      res.render('/course/edit', {
+        msg: err
+      })
+    } else {
+      // findOneAndUpdate({_id: id}, {$set: body}, {new: true, useFindAndModify: false})
+      if(req.file){
+        Course.findByIdAndUpdate(req.params.courseId, { image: req.file.filename }, {new: true, useFindAndModify: false}, function (err, doc) {
+          if (err)
+            return res.status(500).json({ code: 500, error: err });
+          
+        })
+      }
+      req.flash('success', { msg: 'Success! Picture uploaded.' });
+      return res.redirect('/course');
+    }
+  })
+  // return res.redirect('/course');
+}
+
+
+// const multer = require('multer');
+
+// //set storage engine
+// const storage = multer.diskStorage({
+//   destination: './new/',
+//   filename: function(req, file, cb){
+//     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+//   }
+// });
+
+// //init upload
+// const upload = multer({
+//   storage : storage
+// }).single('myImage');
 
 exports.indexByStudent = async (req, res) => {
 
@@ -110,11 +180,15 @@ exports.index = async (req, res) => {
   var d = new Date();
   var n = d.getMonth();
   var currentSemester = n > 8 ? 'ganjil' : 'genap'
+  var hostname = req.headers.host; // hostname = 'localhost:8080'
+  var pathname = url.parse(req.url).pathname; // pathname = '/MyApp'
+  
+
   // var courseList = await Course.find({semester:currentSemester, status:1}, {}, { sort: { order: 1 } }).exec();
   var courseList = await Course.find({}, {}, { sort: { status: -1 } }).exec();
   // console.log(exerciseList);
   //   function(err, exerciseList) {
-  return res.render('course/list', { courses: courseList, title: 'Course List' });
+  return res.render('course/list', { courses: courseList, title: 'Course List', file:`image/` });
   //   });
   //   MyModel.find({ name: /john/i }, 'name friends', function (err, docs) { })
 };
@@ -211,7 +285,8 @@ exports.getById = async (req, res) => {
   try {
     var thisCourse = await Course.findById(req.params.courseId).exec();
     var author = await User.findById(thisCourse.author).exec();
-    return res.render('course/edit', { forum:thisForum,title: thisCourse.title, ex: thisCourse, teachers, modules, idCourse: req.params.courseId, author: author.profile.name, classes, exercises, quis, listYear:listYear, currentYear:currentYear, classBySemesterandYear:classBySemesterandYear });
+    console.log(thisCourse)
+    return res.render('course/edit', { forum:thisForum,title: thisCourse.title, ex: thisCourse, teachers, modules, idCourse: req.params.courseId, author: author.profile.name, classes, exercises, quis, listYear:listYear, currentYear:currentYear, classBySemesterandYear:classBySemesterandYear, imageCourse:thisCourse.image });
   } catch (err) {
     console.log(thisCourse);
     res.status(500);

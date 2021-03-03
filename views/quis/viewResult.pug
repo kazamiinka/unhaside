@@ -1,0 +1,44 @@
+extends ../layout
+
+block content
+  .container
+    .page-header(data-id=ex._id)
+      h3 #{title}'s Courses
+      hr
+
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item(aria-current="page")
+          a(href="/course")
+            | All Courses
+        li.breadcrumb-item.active(aria-current="page")
+          | #{title}'s Course
+        
+
+  .container
+    .jumbotron
+        a.pull-right.btn.btn-sm.btn-success.bt-export(href='/quis.xlsx/') Export
+        table.table.table-striped
+            thead
+                tr
+                th(scope='col') #
+                th(scope='col') Student
+                th(scope='col') Total Score
+                th(scope='col') Submit Date
+            tbody
+                - var num = 1
+                each q in quisStudent
+                    tr
+                    th(scope='row')=num++
+                    td=q.studentId.profile.name ? q.studentId.profile.name : q.studentId.email
+                    td=q.totalScore
+                    td=new Date(q.createdAt).toLocaleString()
+
+
+append end-script
+  script.
+
+    
+
+
+

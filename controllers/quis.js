@@ -5,6 +5,9 @@ const Work = require('../models/Work');
 const Quis = require('../models/Quis');
 const Course = require('../models/Course');
 const QuisStudent = require('../models/QuisStudent');
+const exportUserToExcel = require('../src/exportService');
+// const fs = require('fs/promises');
+const download = require('download-file')
 
 /**
  * GET /
@@ -67,6 +70,37 @@ exports.getQuisStudentById = async (req, res) => {
     // console.log(Quises)
     // console.log(thisQuis);
     return res.render('quis/studentView', { title: thisQuis.title, ex: thisQuis, courseTitle: thisCourse.title, courseId: req.params.courseId, quisId: req.params.moduleId, isAlreadyAnswer:isAlreadyAnswer });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+exports.getAllQuisResult = async (req, res) => {
+  // console.log(req.params.quisId);
+  // var workbook = new Excel.Workbook();
+  // worksheet.forEach(function(row){ worksheet.addRow(row); })
+  // console.log(workbook)
+  try {
+    var thisQuis = await Quis.findById(req.params.quisId).exec();
+    var thisCourse = await Course.findById(req.params.courseId).exec();
+    var QuisesStudent = await QuisStudent.find({quisId:req.params.quisId}).populate('studentId').exec();
+    // var isAlreadyAnswer = QuisesStudent.length > 0
+    // console.log(isAlreadyAnswer)
+    // console.log(Quises)
+    // console.log(QuisesStudent);
+
+    const workSheetColumnName = [
+      "Student",
+      "Total Score",
+      "Submit Date"
+    ]
+  
+    const workSheetName = 'Users';
+    const filePath = './outputFiles/exel-from-js.xlsx';
+    fs.unlink(filePath) // remove old data
+    exportUserToExcel(QuisesStudent, workSheetColumnName, workSheetName, filePath) // create new data
+    
+    return res.render('quis/viewResult', { title: thisQuis.title, ex: thisQuis, courseTitle: thisCourse.title, courseId: req.params.courseId, quisId: req.params.quisId, quisStudent:QuisesStudent });
   } catch (err) {
     console.log(err);
   }

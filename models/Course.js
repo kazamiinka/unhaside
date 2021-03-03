@@ -10,7 +10,8 @@ const courseSchema = new mongoose.Schema({
 	active: Boolean,
 	status:Boolean,
 	semester:String,
-	status:Boolean
+	status:Boolean,
+	image:String
 }, { timestamps: true });
 
 const Course = mongoose.model('Course', courseSchema);
