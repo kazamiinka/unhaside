@@ -8,6 +8,7 @@ const QuisStudent = require('../models/QuisStudent');
 const exportUserToExcel = require('../src/exportService');
 // const fs = require('fs/promises');
 const download = require('download-file')
+var fs = require('fs');
 
 /**
  * GET /
@@ -97,7 +98,7 @@ exports.getAllQuisResult = async (req, res) => {
   
     const workSheetName = 'Users';
     const filePath = './outputFiles/exel-from-js.xlsx';
-    fs.unlink(filePath) // remove old data
+    // fs.unlink(filePath) // remove old data
     exportUserToExcel(QuisesStudent, workSheetColumnName, workSheetName, filePath) // create new data
     
     return res.render('quis/viewResult', { title: thisQuis.title, ex: thisQuis, courseTitle: thisCourse.title, courseId: req.params.courseId, quisId: req.params.quisId, quisStudent:QuisesStudent });
