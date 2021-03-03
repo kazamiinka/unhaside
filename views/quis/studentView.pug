@@ -2,8 +2,28 @@ extends ../layout
 
 block content
     .container
+        .page-header(data-id)
+            //-   h3 #{title}'s Courses
+            //- h5 Created by #{author}
+            //- h5
+                a.badge.badge-yellow(href='/course/livecourses/'+ idCourse,style="margin-right:5px;") Live Class
+            
+            //- nav(aria-label="breadcrumb")
+            //- ol.breadcrumb
+                li.breadcrumb-item(aria-current="page")
+                a(href="/course")
+                    | All Courses
+                li.breadcrumb-item.active(aria-current="page")
+                | Course
+    .container
         if isAlreadyAnswer
-            p Sudah Quis
+            .alert.alert-success(role="alert")
+                label
+                    strong Info
+                hr
+                p Anda telah menyelesaikan quis
+                        
+                        
         else
             form.form-horizontal.form-quis-student
                         .modal-dialog.modal-dialog-centered.modal-add-course(role='document', style="width:100%")
