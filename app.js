@@ -22,6 +22,7 @@ const expressValidator = require('express-validator');
 const sass = require('node-sass-middleware');
 // const upload = require('express-fileupload');
 const multer = require('multer');
+// const fs = require('fs');
 
 //set storage engine
 const storage = multer.diskStorage({

@@ -5,7 +5,7 @@ block content
     .page-header
 
   .container
-    .col-sm-2(style="height:auto; padding-bottom:100px; border-right:solid 2px #343a40;margin-top:70px")
+    .col-sm-2(style="height:auto; padding-bottom:100px;margin-top:70px")
       nav.nav-sidebar
          ul.nav.tabs
             -var num = 1
@@ -15,7 +15,7 @@ block content
     // tab content
     .tab-content
         #tab01.tab-pane.active.text-style
-            .card(style="background-color:#cacaca;  border:0px; padding-left:2%")
+            .card(style="background-color:white; width:auto; border-radius:20px; padding-left:2%")
                 h1.display-3 Course #{ex.title}
                 //- p.lead Bootstrap Jumbotron to highlight speciality of your wesbites.
                 hr.m-y-md
@@ -27,7 +27,7 @@ block content
         - var set = 1
         each c in modules
             div(id="tab"+(set++)).tab-pane.text-style
-                .col-md-8
+                .col-md-8(style="background-color:white; width:auto; border-radius:20px")
                     h2 #{c.titleModule}
                     - var text=c.module
                     p!=text
