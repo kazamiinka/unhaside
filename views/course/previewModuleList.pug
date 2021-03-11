@@ -27,7 +27,7 @@ block content
         - var set = 1
         each c in modules
             div(id="tab"+(set++)).tab-pane.text-style
-                .col-md-8(style="background-color:white; width:auto; border-radius:20px")
+                .col-md-8(style="background-color:white; border-radius:20px")
                     h2 #{c.titleModule}
                     - var text=c.module
                     p!=text
