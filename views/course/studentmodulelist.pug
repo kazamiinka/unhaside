@@ -37,16 +37,13 @@ block content
 
     .card
           #headingFour.card-header
-            h5.mb-0.col-md-9
+            h5.mb-0.col-md-1
               button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFive' aria-expanded='false' aria-controls='collapseThree')
                 | Quis 
                 i.fa.fa-angle-down
-            if(user.role == 'teacher' || user.role == 'admin')
-              h5.mb-0.col-md-3
-                a.nounderline(href='/course/'+ ex._id +'/quis/add')
-                  button.btn.btn-link(type='button')
-                      i.fa.fa-plus-circle
-                      | Add New Quis
+            h5.mb-0.col-md-8
+              button.btn.btn-link(type='button')
+                  .badge.badge-light #{quisest.length}
 
           #collapseFive.collapse(aria-labelledby='headingFour ' data-parent='#accordion')
               .card-body
@@ -107,13 +104,14 @@ block content
             //-   if(ce == user.id)
             //-     - isAssign = true
             //- p=isAssign
-            h5.mb-0.col-md-9
+            h5.mb-0.col-md-1
               button.btn.btn-link.collapsed(data-toggle='collapse' data-target='#collapseFive3' aria-expanded='false' aria-controls='collapseThree')
                 | Exercise 
                 i.fa.fa-angle-down
             //- if(user.role == 'teacher' || user.role == 'admin')
-            h5.mb-0.col-md-3
-              a.nounderline(href='/course/'+ ex._id +'/forum/add')
+            h5.mb-0.col-md-8
+              button.btn.btn-link(type='button')
+                .badge.badge-light #{exercise.length}
                 //- button.btn.btn-link(type='button')
                 //-     i.fa.fa-plus-circle
                 //-     | Add New 
