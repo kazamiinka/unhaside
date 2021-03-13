@@ -67,10 +67,12 @@ exports.getQuisStudentById = async (req, res) => {
     var thisCourse = await Course.findById(req.params.courseId).exec();
     var QuisesStudent = await QuisStudent.find({quisId:req.params.quisId,studentId:req.user.id}).exec();
     var isAlreadyAnswer = QuisesStudent.length > 0
-    console.log(isAlreadyAnswer)
+    var classid = await Class.find({courseId:req.params.courseId, students:req.user.id}).exec()
+
+
     // console.log(Quises)
     // console.log(thisQuis);
-    return res.render('quis/studentView', { title: thisQuis.title, ex: thisQuis, courseTitle: thisCourse.title, courseId: req.params.courseId, quisId: req.params.moduleId, isAlreadyAnswer:isAlreadyAnswer });
+    return res.render('quis/studentView', { title: thisQuis.title, ex: thisQuis, courseTitle: thisCourse.title, courseId: req.params.courseId, quisId: req.params.moduleId, isAlreadyAnswer:isAlreadyAnswer, classId:classid[0].classId });
   } catch (err) {
     console.log(err);
   }
@@ -93,7 +95,8 @@ exports.getAllQuisResult = async (req, res) => {
     const workSheetColumnName = [
       "Student",
       "Total Score",
-      "Submit Date"
+      "Submit Date",
+      "Class"
     ]
   
     const workSheetName = 'Users';

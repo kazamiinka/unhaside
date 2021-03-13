@@ -25,6 +25,7 @@ block content
                 th(scope='col') Student
                 th(scope='col') Total Score
                 th(scope='col') Submit Date
+                th(scope='col') Class
             tbody
                 - var num = 1
                 each q in quisStudent
@@ -33,6 +34,7 @@ block content
                     td=q.studentId.profile.name ? q.studentId.profile.name : q.studentId.email
                     td=q.totalScore
                     td=new Date(q.createdAt).toLocaleString()
+                    td=q.studentClass
 
 
 append end-script

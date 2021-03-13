@@ -77,7 +77,7 @@ exports.indexByStudent = async (req, res, next) => {
       ]);
 
       // console.log(req.user._id)
-      console.log(classData)
+      // console.log(classData)
       // console.log("class " + classData)
       // console.log("class exercise  " + classData.exercises)
       // console.log(classData)

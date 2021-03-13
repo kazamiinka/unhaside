@@ -30,6 +30,7 @@ block content
                             .modal-content
                                 .modal-header
                                     col-md-12
+                                        p=classId
                                         p Jawablah Pertanyaan ini. (Note: Jawaban bisa lebih dari satu. Diharapkan menjawab dengan teliti) 
                                     button.close(type='button' data-dismiss='modal' aria-label='Close')
                                         span(aria-hidden='true') &times;
@@ -135,8 +136,9 @@ append end-script
             courseId : '#{courseId}',
             quisId: '#{ex._id}',
             studentId : '#{user.id}',
+            studentClass : '#{classId}',
             questionAnswer: jsonDataAnswer,
-            totalScore: totalScore
+            totalScore: totalScore,
         }
         //- console.log(correctAnswer)
        

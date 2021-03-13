@@ -63,7 +63,7 @@ exports.getQuisStudentById = async (req, res) => {
       var thisQuis = await Quis.findById(req.params.quisId).exec();
       var thisCourse = await Course.findById(req.params.courseId).exec();
       var thisQuisStudent = await QuisStudent.find({studentId : req.user.id}).exec();
-      console.log(thisQuisStudent );
+      
       return res.render('quis/studentView', {title: thisQuis.title, ex: thisQuis, courseTitle : thisCourse.title, courseId: req.params.courseId, quisId : req.params.moduleId});
   } catch (err) {
       console.log(err);
@@ -73,7 +73,6 @@ exports.getQuisStudentById = async (req, res) => {
 
 exports.create = (req, res, next) => {
  
-  console.log("student")
 //   if (req.user.role == 'student')
 //     return res.status(404).json({code:404});
   // var answer = Quis.find({courseId: req.course._id}).exec()

@@ -15,7 +15,7 @@ const exportExcel = (data, workSheetColumnNames, workSheetName, filePath) => {
 
 const exportUsersToExcel = (users, workSheetColumnNames, workSheetName, filePath) => {
     const data = users.map(user => {
-        return [user.studentId.profile.name ? user.studentId.profile.name : user.studentId.email, user.totalScore, user.createdAt]
+        return [user.studentId.profile.name ? user.studentId.profile.name : user.studentId.email, user.totalScore, user.createdAt, user.studentClass]
     });
     exportExcel(data, workSheetColumnNames, workSheetName, filePath)
 }

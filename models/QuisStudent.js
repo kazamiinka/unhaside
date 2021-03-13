@@ -6,6 +6,7 @@ const quisStudentSchema = new mongoose.Schema({
     parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Module' },
     quisId: { type: mongoose.Schema.Types.ObjectId, ref: 'Quis' },
     studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    studentClass: String,
     questionAnswer: [{
         ask: String,
         answer: [],
