@@ -95,9 +95,10 @@ block content
                 span.asteriskField *
               #students.controls.col-md-8(style='margin-bottom: 10px')
                 each el in students
-                  label.radio-inline
-                    input#id_select_1(data-id=el._id type='checkbox' checked=el.inClass style='margin-bottom: 10px')
-                    |                                          #{el.email}
+                  if (!alreadyAssign.includes(el._id.toString()))
+                    label.radio-inline
+                      input#id_select_1(data-id=el._id type='checkbox' checked=el.inClass style='margin-bottom: 10px')
+                      |                                          #{el.email}
             #div_id_As.form-group.required
               label.control-label.col-md-4.requiredField(for='id_As')
                 | Exercises

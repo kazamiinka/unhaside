@@ -57,23 +57,17 @@ exports.getById = async (req, res) => {
       Classest = docs 
     });
 
-    // console.log(Classest)
   
-   const [classData, exerciseData, userData, courseData] = await Promise.all([
+  
+   const [classData, exerciseData, userData, courseData, classStudent] = await Promise.all([
      Class.findById(req.params.classId).exec(),
      Exercise.find({courseId:req.params.courseId}).sort('title').exec(),
      User.find({}).sort('email').exec(),
-     Course.findById(req.params.courseId).exec()
+     Course.findById(req.params.courseId).exec(),
+     Class.find({courseId:req.params.courseId, _id: { $ne: req.params.classId } }).exec()
     ]);
 
-    
-
-    // var thisCourse = null
-    // Courses.findById(classData.courseId, function(err, docs) {
-    //   thisCourse = docs 
-    // });
-
-    // console.log(thisCourse)
+    console.log(classStudent)
 
     // console.log(classData.courseId)
    // console.log(classData.students);
@@ -81,7 +75,14 @@ exports.getById = async (req, res) => {
     var students = userData.filter((s) => s.role === 'student')
       .map((s) => { 
         s=Object.assign({},s._doc);
+        // console.log("=============")
+        // console.log(s)
+        // s.isAssign = classStudent.
         s.inClass = classData.students.indexOf(s._id)>=0;
+        // s.alreadyAssign = ClassestStudents.id 
+        // s.alreadyAssign = classData.students.find(s._id)
+        // console.log(Classest.students)
+        // console.log(s)
         return s;
       })
       .sort((l, r) => {
@@ -93,6 +94,7 @@ exports.getById = async (req, res) => {
         }
         return l.email.localeCompare(r.email);    
       });
+      
     var assistants = userData.filter((s) => s.role === 'assistant')
       .map((s) => { 
         s=Object.assign({},s._doc);
@@ -123,15 +125,17 @@ exports.getById = async (req, res) => {
         return s;
       });
 
-      
-
-    // console.log(teachers, assistants, students, exercises);
-
-    // res.json({teachers, assistants, students, exercises});
-    // var thisCourse = Courses.findById('5e37b6f9d37b3942dc4fbb8f').exec();
-    // console.log(thisCourse)
+    
+      var idStud = []
+      classStudent.forEach(element => {
+        element.students.forEach(s => {
+          var foo = s;
+          var bar = '' + foo;
+          (idStud.push(bar))
+        });
+      });
     return res.render('class/edit', { title: 'Edit Class',
-      courseData,classData, teachers, assistants, students, exercises
+      courseData,classData, teachers, assistants, students, exercises, alreadyAssign:idStud
     });
   } catch(err) {
     return res.status(500);
