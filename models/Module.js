@@ -17,7 +17,7 @@ const moduleSchema = new mongoose.Schema({
 	order: Number,
 	editor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
 	exercises : [{ type: subdocSchema }], 
-    active: Boolean
+    active: Boolean,
 }, { timestamps: true });
 
 const Module = mongoose.model('Module', moduleSchema);

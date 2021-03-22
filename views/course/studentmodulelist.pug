@@ -13,12 +13,28 @@ block content
   .container
     .row
       .card
-        .col-md-12
-          .col-md-10
-            h3 All Modules #{ex.title}
-          .col-md-2(style='padding:20px')
+        .card-horizontal(style="display:flex; flex: 1 1 auto;")
+          .img-square-wrapper
+            img(src='/image/'+ ex.image, style="width:300px; height:180px")
+          .card-body
+            h4.card-title #{ex.title}
+            p.card-text
+              | #{ex.description}
+            br
             a(href="/course/preview/" + ex.id + "/moduleList")
               button.btn.btn-outline-info(type='button') Go To Module List
+        .card-footer
+          small.text-muted Last updated 3 mins ago
+  br
+  //- .container
+  //-   .row
+  //-     .card
+  //-       .col-md-12
+  //-         .col-md-10
+  //-           h3 All Modules #{ex.title}
+  //-         .col-md-2(style='padding:20px')
+  //-           a(href="/course/preview/" + ex.id + "/moduleList")
+              
       //- each c in modules
       //-   .col-md-4
       //-     .card.mb-4.box-shadow(style='height: 100% !important;')

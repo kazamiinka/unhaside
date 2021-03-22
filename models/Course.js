@@ -1,3 +1,4 @@
+const { text } = require('body-parser');
 const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
@@ -11,7 +12,8 @@ const courseSchema = new mongoose.Schema({
 	status:Boolean,
 	semester:String,
 	status:Boolean,
-	image:String
+	image:String,
+	description: String 
 }, { timestamps: true });
 
 const Course = mongoose.model('Course', courseSchema);

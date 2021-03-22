@@ -93,7 +93,7 @@ block content
               label.control-label.col-md-4.requiredField(for='id_As')
                 | Students
                 span.asteriskField *
-              #students.controls.col-md-8(style='margin-bottom: 10px')
+              #students.contrstuols.col-md-8(style='margin-bottom: 10px')
                 each el in students
                   if (!alreadyAssign.includes(el._id.toString()))
                     label.radio-inline
@@ -116,7 +116,7 @@ block content
                             checked=el.active
                             style='margin-bottom: 10px'
                           )
-                        a.title(href='/exercise/'+el._id)= el.title
+                        a.title= el.title
                       .deadline
                         input.input-md.form-control.deadline(
                           type='date'

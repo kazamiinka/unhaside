@@ -92,7 +92,7 @@ exports.indexByStudent = async (req, res) => {
 
   var d = new Date();
   var n = d.getMonth();
-  var currentSemester = n > 8 ? 'ganjil' : 'genap'
+  var currentSemester = n > 8 ? 'awal' : 'akhir'
   var courseList = await Course.find({$or: [{semester: currentSemester}, {status: 1}]}, {}, { sort: { order: 1 } }).exec();
   return res.render('course/studentlist', { courses: coursesData, title: 'My Courses' });
 }
@@ -141,6 +141,7 @@ exports.previewModuleById = async (req, res) => {
   Class.find({ courseId: req.params.courseId }, function (err, docs) {
     Classest = docs
   });
+  console.log("image : " + thisCourse.image)
   return res.render('course/studentmodulelist', { thisForum:thisForum,thisModules : thisModules, ex:thisCourse, idCourse: thisCourse.id, title: thisCourse.title, modules: Modules, classest: Classest, quisest: Quises, isAlreadyAnswer:isAlreadyAnswer, discussion:thisDiscussion, exercise:thisExercise, classExercise:classData });
 }
 
@@ -179,7 +180,7 @@ exports.index = async (req, res) => {
 
   var d = new Date();
   var n = d.getMonth();
-  var currentSemester = n > 8 ? 'ganjil' : 'genap'
+  var currentSemester = n > 8 ? 'awal' : 'akhir'
   var hostname = req.headers.host; // hostname = 'localhost:8080'
   var pathname = url.parse(req.url).pathname; // pathname = '/MyApp'
   
@@ -277,7 +278,7 @@ exports.getById = async (req, res) => {
 
   var d = new Date();
   var n = d.getMonth();
-  var currentSemester = n > 8 ? 'ganjil' : 'genap'
+  var currentSemester = n > 8 ? 'awal' : 'akhir'
 
   var classBySemesterandYear = await Class.find({$and: [{courseId: req.params.courseId}, {status:1}]}, {}, { sort: { order: 1 } }).exec();
 

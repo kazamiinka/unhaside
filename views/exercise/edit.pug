@@ -4,32 +4,34 @@ block content
   .page-header(data-id=ex.id)
     h3 Edit Exercise
 
-  .editor-container
-    .form-group
-      label.col-sm-3.control-label(for='title') Exercise Name
-      .col-sm-7
-        input.form-control(type='text', name='title', id='title', placeholder='Name', value=ex.title)
-    .form-group
-      label.col-sm-3.control-label(for='enablerunraw') Enable run raw code
-      .col-sm-7
-        input.form-control(type='checkbox', name='enablerunraw', id='enablerunraw', checked=ex.enablerunraw)
+  .container
+    .row
+    .editor-container
+      .form-group
+        label.col-sm-3.control-label(for='title') Exercise Name
+        .col-sm-7
+          input.form-control(type='text', name='title', id='title', placeholder='Name', value=ex.title)
+      .form-group
+        label.col-sm-3.control-label(for='enablerunraw') Enable run raw code
+        .col-sm-7
+          input.form-control(type='checkbox', name='enablerunraw', id='enablerunraw', checked=ex.enablerunraw)
 
-    #exercise-editor.editor
-      #instruction-editor-tab.tab.editor-2
-        .editor-header Instruction
-        .editor-left
-          .editor-left-text.vertical-text.hide
-            i.fa.fa-angle-up.fa-lg
-            span Instruction
-        #instruction-editor.spell-editor= ex.instruction
+      #exercise-editor.editor
+        #instruction-editor-tab.tab.editor-2
+          .editor-header Instruction
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span Instruction
+          #instruction-editor.spell-editor= ex.instruction
 
-      #testcode-editor-tab.tab.editor-2
-        .editor-header Test Code Template
-        .editor-left
-          .editor-left-text.vertical-text.hide
-            i.fa.fa-angle-up.fa-lg
-            span Test Code Template
-        #testcode-editor.spell-editor= ex.testcode
+        #testcode-editor-tab.tab.editor-2
+          .editor-header Test Code Template
+          .editor-left
+            .editor-left-text.vertical-text.hide
+              i.fa.fa-angle-up.fa-lg
+              span Test Code Template
+          #testcode-editor.spell-editor= ex.testcode
 
   .editor-container
     #init-editor.editor

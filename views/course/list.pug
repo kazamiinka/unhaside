@@ -73,6 +73,9 @@ block content
             .col-sm-12
               input.form-control(type='text', name='title', id='title', placeholder='Course Title',autocomplete='off')
           .form-group
+            .col-sm-12
+              textarea.form-control(name='description', id='quis_desc', placeholder='Course Description', autocomplete='off', cols='50', rows="15")
+          .form-group
             .col-sm-2
               label(for="inlineCheckbox1" class="form-check-label") Semester: 
             .col-sm-6
@@ -100,12 +103,12 @@ append end-script
     $('#bt-new').click(function() {
         var d = new Date();
         var n = d.getMonth();
-        var currentSemester = n > 8 ? 'ganjil' : 'genap'
-
-        var semesterValue = 'genap'
+        var currentSemester = n > 8 ? 'awal' : 'akhir'
+        alert("opop")
+        var semesterValue = 'akhir'
         //- $(".modal-add-course").find('#js-semester').on('change', function() {
         if ($(".modal-add-course").find('#js-semester').is(':checked')) {
-            semesterValue = 'ganjil'
+            semesterValue = 'akhir'
         }
 
         var statusValue = 0
@@ -123,6 +126,7 @@ append end-script
 
         var newCourse = {
             title: $(this).closest('.modal-add-course').find('#title').val(),
+            description: $(this).closest('.modal-add-course').find('#quis_desc').val(),
             author : '#{user._id}',
             order: 100,
             status: statusValue,

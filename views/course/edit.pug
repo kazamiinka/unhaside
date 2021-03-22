@@ -383,10 +383,10 @@ append end-script
     }
 
     $('#bt-new-class').click(function() {
-        var semesterValue = 'genap'
+        var semesterValue = 'akhir'
         //- $(".modal-add-course").find('#js-semester').on('change', function() {
         if ($(".modal-add-course").find('#js-semester').is(':checked')) {
-            semesterValue = 'ganjil'
+            semesterValue = 'awal'
         }
         var tahun = $("#classId").closest('.form-group').find('#semester').val()
         var newClass = {
