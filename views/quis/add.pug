@@ -26,7 +26,8 @@ block content
                             .modal-body
                                 .form-group.new-question
                                     .col-sm-12
-                                        textarea.form-control(type='text', name='quisTitle', id='quisTitle', placeholder='Quis Title',autocomplete='off')
+                                        label Quis Title
+                                        textarea.form-control.js-summernote-title(type='text', name='quisTitle', id='quisTitle', placeholder='Quis Title',autocomplete='off')
                                 .form-group.new-questionAppend    
                                     .col-sm-12.newQuestionTitle
                                 button#bt-new-question.btn.btn-primary Add Question
@@ -54,16 +55,75 @@ append end-script
         window.location.href='/course/'+$(this).data('id')
     })
 
+    var default_toolbar = {
+            height: 300,
+            toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'hr']],
+            ['insert', ['prettyprint']],
+            ['view', ['fullscreen', 'codeview']],
+            ['help', ['help']],
+            ['mybutton', ['myVideo']]
+            ],
+            buttons: {
+                myVideo: function(context) {
+                    var ui = $.summernote.ui;
+                    var button = ui.button({
+                        contents: '<i class="fa fa-video-camera"/>',
+                        tooltip: 'video',
+                        click: function() {
+                            var div = document.createElement('div');
+                            div.classList.add('embed-container');
+                            var iframe = document.createElement('iframe');
+                            iframe.src = prompt('Enter video url:');
+                            iframe.setAttribute('frameborder', 0);
+                            iframe.setAttribute('width', '100%');
+                            iframe.setAttribute('allowfullscreen', true);
+                            div.appendChild(iframe);
+                            context.invoke('editor.insertNode', div);
+                        }
+                    });
+
+                    return button.render();
+                }
+            }
+    }
+
+    var simple_toolbar = {
+            height: 100,
+            toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['para', ['ul', 'ol']],
+            ['insert', ['picture']],
+            ['insert', ['prettyprint']],
+            ['view', ['codeview']],
+            ]
+    }
+
+    
+    $(".js-summernote-title").summernote(default_toolbar);  
+    
+
     form.find('#bt-new-question').on('click', function(e){
         num = num + 1
         e.preventDefault()
+        var nameClass =  'js-summernote-default-'+num+'';
         var template =  '<div class="addNewQuestion'+num+' newQuestion">'+
-                        '<textarea class="form-control" name="question" id="question" placeholder="Type Question" autocomplete="off"></textarea><br>' + 
+                        '<label>Question</label>' +
+                        '<textarea class="form-control js-summernote-default-'+num+'" name="question" id="question" placeholder="Type Question" autocomplete="off"/><br>' + 
                         '<div class="col-md-9">' +
                         '<div class="form-group row quis-option-answer">' +
                             '<label for="staticEmail" class="col-sm-1 quis-option">A</label>' +
                             '<div class="col-sm-7">' +
-                            '<input type="text" class="form-control" id="questionAnswer">' +
+                            '<textarea class="form-control js-summernote" id="questionAnswer"/>' +
                             '</div>'+
                             '<label for="staticEmail" class="col-sm-1">is Answer?</label>' +
                             '<div class="col-sm-2">' +
@@ -76,7 +136,7 @@ append end-script
                         '<div class="form-group row quis-option-answer">' +
                             '<label for="staticEmail" class="col-sm-1 quis-option">B</label>' +
                             '<div class="col-sm-7">' +
-                            '<input type="text" class="form-control" id="questionAnswer">' +
+                            '<textarea class="form-control js-summernote" id="questionAnswer"/>' +
                             '</div>'+
                             '<label for="staticEmail" class="col-sm-1">is Answer?</label>' +
                             '<div class="col-sm-2">' +
@@ -89,7 +149,7 @@ append end-script
                         '<div class="form-group row quis-option-answer">' +
                             '<label for="staticEmail" class="col-sm-1 quis-option">C</label>' +
                             '<div class="col-sm-7">' +
-                            '<input type="text" class="form-control" id="questionAnswer">' +
+                            '<textarea class="form-control js-summernote" id="questionAnswer"/>' +
                             '</div>'+
                             '<label for="staticEmail" class="col-sm-1">is Answer?</label>' +
                             '<div class="col-sm-2">' +
@@ -102,7 +162,7 @@ append end-script
                         '<div class="form-group row quis-option-answer">' +
                             '<label for="staticEmail" class="col-sm-1 quis-option">D</label>' +
                             '<div class="col-sm-7">' +
-                            '<input type="text" class="form-control" id="questionAnswer">' +
+                            '<textarea class="form-control js-summernote" id="questionAnswer"/>' +
                             '</div>'+
                             '<label for="staticEmail" class="col-sm-1">is Answer?</label>' +
                             '<div class="col-sm-2">' +
@@ -115,51 +175,18 @@ append end-script
                         '</div>' +
                         '<div class="col-md-9 score-question"><input class="form-control" type="number" name="score" placeholder="score"><br></div>'
         $($('.newQuestionTitle')).append(template)
-        $('#question').summernote({
-        height: 300,
-        toolbar: [
-          ['style', ['style']],
-          ['font', ['bold', 'italic', 'underline', 'clear']],
-          ['fontname', ['fontname']],
-          ['color', ['color']],
-          ['para', ['ul', 'ol', 'paragraph']],
-          ['height', ['height']],
-          ['table', ['table']],
-          ['insert', ['link', 'picture', 'hr']],
-          ['insert', ['prettyprint']],
-          ['view', ['fullscreen', 'codeview']],
-          ['help', ['help']],
-          ['mybutton', ['myVideo']]
-        ],
-        buttons: {
-            myVideo: function(context) {
-                var ui = $.summernote.ui;
-                var button = ui.button({
-                    contents: '<i class="fa fa-video-camera"/>',
-                    tooltip: 'video',
-                    click: function() {
-                        var div = document.createElement('div');
-                        div.classList.add('embed-container');
-                        var iframe = document.createElement('iframe');
-                        iframe.src = prompt('Enter video url:');
-                        iframe.setAttribute('frameborder', 0);
-                        iframe.setAttribute('width', '100%');
-                        iframe.setAttribute('allowfullscreen', true);
-                        div.appendChild(iframe);
-                        context.invoke('editor.insertNode', div);
-                    }
-                });
-
-                return button.render();
-            }
-        }
-    });
-       
+ 
+        $('.js-summernote').each(function(){
+            $(this).summernote(simple_toolbar)
+        })
+        //- alert("'"+nameClass+"'")
+        //- var newNameClass = 
+        //- $('.'+nameClass).summernote()
     })
 
-    $(document).ready(function() {
-    
-    });
+    //- $(".js-summernote-default").each(function(){
+        
+    //- })
 
     var question = $('.newQuestionTitle')
     var num = 1
