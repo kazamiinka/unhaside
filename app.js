@@ -245,6 +245,8 @@ app.get('/course/delete/:courseId/:moduleId', passportConfig.isAuthenticated, co
 app.put('/course/:courseId/:moduleId', passportConfig.isAuthenticated, courseController.updateModuleById);
 //excersices
 app.get('/course/exercise/:courseId/:exerciseId', passportConfig.isAuthenticated, courseController.getExerciseById);
+app.get('/course/exercise/getList/:courseId/:exerciseId', passportConfig.isAuthenticated, courseController.getAllExerciseStudentById);
+app.get('/course/exercise/getList/:courseId/:exerciseId/:studentId', passportConfig.isAuthenticated, workController.getByExercise);
 app.put('/course/exercise/:courseId/:exerciseId', passportConfig.isAuthenticated, courseController.updateExerciseById);
 app.get('/course/exercise/delete/:courseId/:exerciseId',passportConfig.isAuthenticated, courseController.deleteExerciseById)
 

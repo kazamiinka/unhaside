@@ -12,6 +12,7 @@ const formidable = require('formidable');
 const multer = require('multer');
 const path = require('path');
 var url = require('url') ;
+const { WorkspaceContext } = require('twilio/lib/rest/taskrouter/v1/workspace');
 
 const storage = multer.diskStorage({
   destination: 'public/image/',
@@ -343,6 +344,26 @@ exports.getExerciseById = async (req, res) => {
   
     return res.render('course/editexercise', {
       title: '', ex: thisExercise, thisCourse, thisModules, courseId: req.params.courseId, exerciseId: req.params.exerciseId
+    }); 
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+exports.getAllExerciseStudentById = async (req, res) => {
+  try {
+    // console.log(req.params.exerciseId)
+    var thisCourse = await Course.findById(req.params.courseId).exec();
+    var thisExercise = await Exercise.findById(req.params.exerciseId).exec();
+    var thisModules = await Module.find({ $or: [{ courseId: req.params.courseId }, { titleModule: 'None' }] }).exec();
+    var modules = await Module.find({courseId : req.params.courseId}).exec();
+    // var thisCourse = await Course.find(req.params.courseId).exec();
+    var thisExerciseListByStudent = await Work.find({exercise : req.params.exerciseId}).populate('student').exec()
+    var u = Work.find({ exercise: { $all: [req.params.exerciseId] } })
+      .populate('student').exec()
+    console.log(thisExerciseListByStudent)
+    return res.render('exercise/exerciseList', {
+      title: '', ex: thisExercise, thisCourse, thisModules, courseId: req.params.courseId, exerciseId: req.params.exerciseId, exercisesList:thisExerciseListByStudent
     }); 
   } catch (err) {
     console.log(err);

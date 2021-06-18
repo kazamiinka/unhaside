@@ -1,0 +1,56 @@
+extends ../layout
+
+block content
+  .container
+    if exercisesList
+    .page-header
+      h3 Exercise Student List
+      
+    ul.list-group
+      each ex in exercisesList
+        li.list-group-item(style="height:50px")
+          // i.fa.fa-circle
+          a.nounderline(href='/course/exercise/getList/'+ courseId +'/'+ ex.exercise + '/' + ex.student.id) #{ex.student.profile.name ? ex.student.profile.name: ex.student.email}&nbsp
+            span.pull-right
+            //-   a.pull-right.btn.btn-sm.btn-primary(style="margin-right:5px; border-radius:20px") 
+            //-      | Live Clas 
+            //-      span.fa.fa-video-camera 
+            //-   if (user.role == 'teacher' || user.role == 'assistant' || user.role == 'admin')
+            //-    a.pull-right.btn.btn-sm.btn-primary(href='/classlog/' + ex.id,style="margin-right:5px; border-radius:20px")  
+            //-      | Stats 
+            //-      span.fa.fa-bar-chart
+            //-   if (user.role == 'teacher'|| user.role == 'admin')
+            //-     a.pull-right.btn.btn-sm.btn-primary(style="margin-right:5px; border-radius:20px", href='/class-staff/' + ex.id)  
+            //-      | Staff 
+            //-      span.fa.fa-user
+            //-     a.pull-right.btn.btn-sm.btn-danger(href='#',style="margin-right:5px; margin-bottom:5px; border-radius:20px", onclick='deleteId(\'' + ex.id + '\')') 
+            //-      | Delete  
+            //-      span.fa.fa-trash      
+
+
+append end-script
+  script.
+    function deleteId(id){
+      var r = confirm("Are you sure to delete class ?");
+      if(r==true){
+         window.location.href = '/class/delete/' + id;
+      }
+    }
+    $('#bt-new').click(function() {
+        var newClass = {
+            classId: $('#classId').val(),
+            courseId: '#{courseId}'
+        };
+        fetch('/class', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newClass),
+            credentials: 'include',
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+            })
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => console.log('Success:', response)); 
+        
+    })

@@ -129,6 +129,12 @@ block content
                     span.pull-right        
                       //- a(href='#',style="margin-right:5px;", onclick='deleteIdExercise(\'' + c.id + '\')') 
                       //-   i.fa.fa-trash(style='color: red') 
+                      a.btn.btn-sm.btn-primary(href='/course/exercise/getList/'+ ex._id +'/'+ c._id, style="margin-left:1%; border-radius:20px")
+                        | Result List             
+                        span.fa.fa-list
+                    span.pull-right        
+                      //- a(href='#',style="margin-right:5px;", onclick='deleteIdExercise(\'' + c.id + '\')') 
+                      //-   i.fa.fa-trash(style='color: red') 
                       a.btn.btn-sm.btn-danger(href='#' + c.id, style="margin-left:1%; border-radius:20px" onclick='deleteIdExercise(\'' + c.id + '\')')
                         | Delete             
                         span.fa.fa-trash

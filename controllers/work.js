@@ -83,9 +83,14 @@ exports.getById = async (req, res) => {
 
 exports.getByExercise = async (req, res) => {
     try {
+
+        var exerciseStudent = req.params.studentId
+        var isDosenPage = exerciseStudent ? true : false
+        console.log(isDosenPage)
+        var studentId = exerciseStudent ? exerciseStudent : req.user._id
         var [exerciseData, workData, classData] = await Promise.all([
             Exercise.findById(req.params.exerciseId).exec(),
-            Work.findOne({exercise:req.params.exerciseId, student:req.user._id}).sort({updatedAt:-1}).exec(),
+            Work.findOne({exercise:req.params.exerciseId, student:studentId}).sort({updatedAt:-1}).exec(),
             Class.findOne({students:{$all: [req.user._id]}}).exec(),
         ]);
         // exerciseData.deadline = classData.exercises.find((e)=>e.exId == req.params.exerciseId).deadline;
@@ -108,7 +113,7 @@ exports.getByExercise = async (req, res) => {
            
         }
         
-        res.render('work/edit',{title: 'Editor: '+exerciseData.title, exercise:exerciseData, work:workData});
+        res.render('work/edit',{title: 'Editor: '+exerciseData.title, exercise:exerciseData, work:workData, isDosenPage:isDosenPage});
         // res.json({exercise:exerciseData, work:workData, classdata:null});
     } catch(err) {
         console.log(err);

@@ -116,8 +116,10 @@ append end-script
             const deadlineTime = moment(this.dataset.deadline)
             this.querySelector('.deadline').setAttribute('title', deadlineTime.format('llll'))
             this.querySelector('.deadline').innerHTML = 'deadline: '+deadlineTime.from()
-            if (deadlineTime.diff() < 0)
+            if (deadlineTime.diff() < 0){
+                this.querySelector('a').removeAttribute("href");
                 this.querySelector('a').style.color = 'gray';
+            }
         }
         $('.exercise-title').each(drawExpire)
         setInterval(function() {
