@@ -12,8 +12,16 @@ block content
             i.fa.fa-save
             | Save
         button#run.btn.btn-primary.left-space-1rem
+            i.fa.fa-play
+            | Run
+        .wrapper
+          select.form-control.select-theme(name="theme",id='theme')
+            each val, index in themeList
+              option(value=Object.keys(val)[0])
+                | #{val[Object.keys(val)[0]]}
+        button#change-background.btn.btn-primary.left-space-1rem
           i.fa.fa-play
-          | Run
+          | Change Background
         if exercise.enablerunraw
           button#run-window.btn.btn-primary.left-space-1rem
             i.fa.fa-play
@@ -260,15 +268,25 @@ append end-script
     $('#js-editor-tab').resizable({handles:'xoxo', minWidth:25});
 
     var htmlEditor = ace.edit('html-editor');
-    htmlEditor.setTheme('ace/theme/monokai');
-    htmlEditor.session.setMode('ace/mode/html');
-    
     var cssEditor = ace.edit('css-editor');
-    cssEditor.setTheme('ace/theme/monokai');
-    cssEditor.session.setMode('ace/mode/css');
-
     var jsEditor = ace.edit('js-editor');
-    jsEditor.setTheme('ace/theme/monokai');
+    var _theme = "monokai"
+    htmlEditor.setTheme('ace/theme/' + _theme);
+    cssEditor.setTheme('ace/theme/' + _theme);
+    jsEditor.setTheme('ace/theme/' + _theme);
+    $('#theme').on('change',function(){
+      _theme = $(this).val()
+    })
+    
+    $('#change-background').on('click',function(){
+        console.log(_theme)
+        htmlEditor.setTheme('ace/theme/' + _theme);
+        cssEditor.setTheme('ace/theme/' + _theme);
+        jsEditor.setTheme('ace/theme/' + _theme);
+    })
+  
+    htmlEditor.session.setMode('ace/mode/html');
+    cssEditor.session.setMode('ace/mode/css');
     jsEditor.session.setMode('ace/mode/javascript');
     //- jsEditor.session.on('change', console.log);
     jsEditor.on('paste', async function processWorkLog(e) {

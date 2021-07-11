@@ -112,8 +112,38 @@ exports.getByExercise = async (req, res) => {
                 workData.js = exerciseData.js;
            
         }
+
+        var themeList = [
+            {monokai:"Monokai"},
+            {merbivore:"Merbivore"},
+            {ambiance:"Ambiance"},
+            {chaos:"Chaos"},
+            {chrome:"Chrome"},
+            {clouds:"Clouds"},
+            {clouds_midnight:"Clouds Midnight"},
+            {cobalt:"Cobalt"},
+            {crimson_editor:"Crimson Editor"},
+            {daw:"Dawn"},
+            {dracula:"Dracula"},
+            {dreamweaver:"Dreamweaver"},
+            {eclipse:"Eclipse"},
+            {github:"Github"},
+            {gob:"Gob"},
+            {gruvbox:"Gruvbox"},
+            {idle_finger:"Idle Finger"},
+            {iplastic:"Iplastic"},
+            {katzenmilch:"Katzenmilch"},
+            {kr_theme:"KR Theme"},
+            {kuroir:"Kuroir"},
+            {merbivore_soft:"Merbivore Soft"},
+            {mono_industrial:"Mono Industrial"},
+            {ambnord_dark:"Nord Dark"},
+            {one_dark:"One Dark"},
+            {pastel_on_dark:"Pastel On Dark"},
+            {xcode:"X Code"},
+        ];
         
-        res.render('work/edit',{title: 'Editor: '+exerciseData.title, exercise:exerciseData, work:workData, isDosenPage:isDosenPage});
+        res.render('work/edit',{title: 'Editor: '+exerciseData.title, exercise:exerciseData, work:workData, isDosenPage:isDosenPage, themeList:themeList});
         // res.json({exercise:exerciseData, work:workData, classdata:null});
     } catch(err) {
         console.log(err);
