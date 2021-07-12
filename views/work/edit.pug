@@ -7,29 +7,32 @@ block content
         div!= exercise.instruction
 
     #command.editor-command
+      col-12.col-sm-6.col-md-8
         if !isDosenPage 
-          button#save.btn.btn-primary(role='button')
+          button#save.btn.btn-primary(role='button',style="padding:1%")
             i.fa.fa-save
             | Save
-        button#run.btn.btn-primary.left-space-1rem
+          button#run.btn.btn-primary.left-space-1rem(style="padding:1%")
             i.fa.fa-play
-            | Run
-        .wrapper
-          select.form-control.select-theme(name="theme",id='theme')
-            each val, index in themeList
-              option(value=Object.keys(val)[0])
-                | #{val[Object.keys(val)[0]]}
-        button#change-background.btn.btn-primary.left-space-1rem
-          i.fa.fa-play
-          | Change Background
+              |  Run
         if exercise.enablerunraw
-          button#run-window.btn.btn-primary.left-space-1rem
+          button#run-window.btn.btn-primary.left-space-1rem(style="padding:1%")
             i.fa.fa-play
             | Run in New Window
         if exercise.testcode
-          button#run-test.btn.btn-primary.left-space-1rem.disabled
+          button#run-test.btn.btn-primary.left-space-1rem.disabled(style="padding:1%")
             i.fa.fa-puzzle-piece
             | Test
+      .col-6.col-md-4
+        .col-md-6(style="margin-left:12%;padding-left:0%")
+          select.form-control.select-theme(name="theme",id='theme')
+              each val, index in themeList
+                option(value=Object.keys(val)[0])
+                  | #{val[Object.keys(val)[0]]}
+        .col-md-3(style="padding-left:0%")
+          button#change-background.btn.btn-primary
+            i.fa.fa-play
+            | Change Background
 
     #work-editor-container.editor-resizable.wide-container
       #work-editor.editor
@@ -61,7 +64,7 @@ block content
           #log-text Log
           #log-linecount
 
-  .col-sm-12.js-iframe
+  .col-sm-12.js-iframe(style="margin-bottom:5%")
     .col-sm-6
       h3 HTML CSS Result
     .col-sm-5.js-title-console
