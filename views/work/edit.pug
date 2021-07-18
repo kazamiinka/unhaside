@@ -8,13 +8,12 @@ block content
 
     #command.editor-command
       col-12.col-sm-6.col-md-8
-        if !isDosenPage 
-          button#save.btn.btn-primary(role='button',style="padding:1%")
-            i.fa.fa-save
-            | Save
-          button#run.btn.btn-primary.left-space-1rem(style="padding:1%")
-            i.fa.fa-play
-              |  Run
+        button#save.btn.btn-primary(role='button',style="padding:1%")
+          i.fa.fa-save
+          | Save
+        button#run.btn.btn-primary.left-space-1rem(style="padding:1%")
+          i.fa.fa-play
+            |  Run
         if exercise.enablerunraw
           button#run-window.btn.btn-primary.left-space-1rem(style="padding:1%")
             i.fa.fa-play
