@@ -279,7 +279,19 @@ app.post('/forum/discussion', passportConfig.isAuthenticated, discussionControll
 app.post('/discussion', passportConfig.isAuthenticated, discussionController.create);
 app.post('/upload/course/:courseId', passportConfig.isAuthenticated, courseController.upload);
 app.get('/quis.xlsx', function (req, res) {
-  res.sendFile(__dirname + '/' + "outputFiles" + '/' + "exel-from-js.xlsx");
+  res.sendFile(__dirname + "/outputFiles/exel-from-js.xlsx");
+});
+app.get('/download/html', function(req, res){
+  const fileHtml = `${__dirname}/outputFiles/exercise/exercise.html`;
+  res.download(fileHtml); // Set disposition and send it.
+});
+app.get('/download/css', function(req, res){
+  const fileCss = `${__dirname}/outputFiles/exercise/exercise.css`;
+  res.download(fileCss); // Set disposition and send it.
+});
+app.get('/download/js', function(req, res){
+  const fileJs = `${__dirname}/outputFiles/exercise/exercisejs.txt`;
+  res.download(fileJs); // Set disposition and send it.
 });
 
 // app.use(express.static(__dirname + '/public'));

@@ -14,6 +14,18 @@ block content
         button#run.btn.btn-primary.left-space-1rem(style="padding:1%")
           i.fa.fa-play
             |  Run
+        a.bt-export(href='/download/html')
+          button#download.btn.btn-primary.left-space-1rem(style="padding:1%")
+            i.fa.fa-up
+              | Download Html
+        a.bt-export(href='/download/css')
+          button#download.btn.btn-primary.left-space-1rem(style="padding:1%")
+            i.fa.fa-up
+              | Download Css
+        a.bt-export(href='/download/js')
+          button#download.btn.btn-primary.left-space-1rem(style="padding:1%")
+            i.fa.fa-up
+              | Download Js
         if exercise.enablerunraw
           button#run-window.btn.btn-primary.left-space-1rem(style="padding:1%")
             i.fa.fa-play
@@ -456,4 +468,5 @@ append end-script
         //- .then(response => console.log('Success:', response))
         .catch(error => console.error('Error:', error));
       }
+      location.reload();
     });

@@ -21,7 +21,7 @@ exports.index = async (req, res) => {
 
 /**
  * GET /work/class/:classId
- * get all works in a class
+ * get all works in a class 
  */
 exports.indexByClass = async (req, res) => {
   const [workData, classData] = await Promise.all([
@@ -86,14 +86,29 @@ exports.getByExercise = async (req, res) => {
 
         var exerciseStudent = req.params.studentId
         var isDosenPage = exerciseStudent ? true : false
-        console.log(isDosenPage)
         var studentId = exerciseStudent ? exerciseStudent : req.user._id
         var [exerciseData, workData, classData] = await Promise.all([
             Exercise.findById(req.params.exerciseId).exec(),
             Work.findOne({exercise:req.params.exerciseId, student:studentId}).sort({updatedAt:-1}).exec(),
             Class.findOne({students:{$all: [req.user._id]}}).exec(),
         ]);
-        // exerciseData.deadline = classData.exercises.find((e)=>e.exId == req.params.exerciseId).deadline;
+
+        const http = require('http'); // or 'https' for https:// URLs
+        const fs = require('fs');
+        var fileNameHtml = 'exercise.html';
+        var fileNameCss = 'exercise.css';
+        var fileNameJs = 'exercisejs.txt';
+        fs.writeFile('outputFiles/exercise/'+fileNameHtml, workData.html, function (err) {
+            if (err) console.log(err)
+        })
+        fs.writeFile('outputFiles/exercise/'+fileNameCss, workData.css, function (err) {
+            if (err) console.log(err)
+        })
+        const fileJs = `${__dirname}/outputFiles/exercise/exercisejs.txt`;
+        fs.writeFile('outputFiles/exercise/'+fileNameJs, workData.js, function (err) {
+            if (err) console.log(err)
+        })
+
         if (!workData) {
             workData = {
                 html: exerciseData.html,
